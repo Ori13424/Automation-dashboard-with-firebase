@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Explore ByteBot's range of smart home products designed to enhance your living experience with cutting-edge technology."/>
+    <meta name="keywords" content="smart home, technology, ByteBot, products, smart switch, smart cleaner"/>
+    <title>ByteBot - Products</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f7ff; /* Background color from index page */
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-in-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: none;
+        }
+        .section-heading {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2a3a56; /* Soft blue color for headings */
+        }
+        .section-subheading {
+            font-size: 1.125rem;
+            color: #65758b; /* Slightly muted gray-blue for subheadings */
+        }
+        .button-primary {
+            background-color: #3a77ff;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .button-primary:hover {
+            background-color: #2a5eff;
+            transform: scale(1.05);
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .button-secondary {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #1f2937; /* gray-800 */
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid #d1d5db; /* gray-300 */
+        }
+        .button-secondary:hover {
+            background-color: #d1d5db; /* gray-300 */
+            transform: scale(1.05);
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 8px; /* MODIFIED: Less rounded for a more professional look */
+            font-size: 0.875rem;
+            font-weight: 500;
+            background-color: #f3f4f6;
+            color: #4b5563;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .filter-btn:hover {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .filter-btn.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .product-card {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+            padding: 24px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        nav a.active {
+            color: #1d4ed8;
+            font-weight: 700;
+            border-bottom: 2px solid #3a77ff;
+            padding-bottom: 2px;
+        }
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #d1d5db;
+            border-radius: 50px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #3a77ff;
+            box-shadow: 0 0 0 3px rgba(58, 119, 255, 0.25);
+        }
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af; /* gray-400 */
+        }
+        .cart-button {
+            position: relative;
+        }
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -12px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="scroll-smooth">
+
+    <header class="flex justify-between items-center px-6 md:px-20 py-4 bg-white shadow-md sticky top-0 z-50">
+        <div class="text-2xl font-bold text-blue-700" data-translate="bytebot">ByteBot</div>
+        <nav class="space-x-6 text-sm font-medium hidden md:block">
+            <a class="hover:text-blue-600" href="index.html" data-translate="home">Home</a>
+            <a class="hover:text-blue-600" href="about_us_updated.html" data-translate="about_us">About Us</a>
+            <a class="hover:text-blue-600 active" href="products.html" data-translate="products">Products</a>
+            <a class="hover:text-blue-600" href="dashboard.html" data-translate="dashboard">Dashboard</a>
+            <a class="hover:text-[#0B1229] transition font-semibold" href="support.html" data-translate="support">Support</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <a href="sign_in_up.html" class="button-primary !py-2 !px-4 text-sm" data-translate="get_started">Get Started</a>
+            <select id="languageToggle" class="border border-gray-300 rounded-md text-sm px-2 py-1 focus:outline-none">
+                <option value="en" data-translate="en">EN</option>
+                <option value="bn" data-translate="বাংলা">বাংলা</option>
+            </select>
+            <button class="cart-button p-2" onclick="viewCart()">
+                <i class="fas fa-shopping-cart text-xl text-gray-600"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+        </div>
+    </header>
+
+    <section class="py-4 px-6 md:px-20">
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" class="search-input" onkeyup="searchProducts()" data-translate-placeholder="search_products">
+        </div>
+    </section>
+
+    <section class="bg-white py-6 border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-wrap gap-2">
+                    <button class="filter-btn active" onclick="filterProducts('all')" data-translate="all_products">All Products</button>
+                    <button class="filter-btn" onclick="filterProducts('electronics')" data-translate="electronics">Electronics</button>
+                    <button class="filter-btn" onclick="filterProducts('cleaning')" data-translate="cleaning">Cleaning</button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-sm text-gray-600" data-translate="sort_by">Sort by:</span>
+                    <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" onchange="sortProducts(this.value)">
+                        <option value="featured" data-translate="featured_sort">Featured</option>
+                        <option value="price-low" data-translate="price_low_sort">Price: Low to High</option>
+                        <option value="price-high" data-translate="price_high_sort">Price: High to Low</option>
+                        <option value="newest" data-translate="newest_sort">Newest</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 px-6 md:px-20 text-center bg-white fade-in">
+        <h2 class="section-heading mb-4" data-translate="our_products">Our Products</h2>
+        <p class="section-subheading max-w-2xl mx-auto mb-12" data-translate="product_description">Explore our wide range of smart home products, crafted to enhance your home with cutting-edge technology.</p>
+        
+        <div id="productList" class="flex flex-wrap justify-center gap-8 mb-12">
+
+            <div class="product-card w-full max-w-xs" data-name="Smart Switch" data-category="electronics" data-price="2500">
+                <img alt="Smart Switch" class="product-image mb-4" src="images/demo1 (1).jpg"/>
+                <h3 class="text-2xl font-semibold mb-2" data-translate="smart_switch">Smart Switch</h3>
+                <p class="text-gray-700 font-bold mb-3" data-translate="1500-3000_tk">1500-3000 TK</p>
+                <p class="text-gray-500 text-sm flex-grow mb-4" data-translate="control_any_electrical_device_with_ease">Control any electrical device with ease.</p>
+                <div class="mt-auto flex flex-col sm:flex-row gap-2">
+                    <button class="button-secondary flex-1" onclick="window.location.href='smart_switch.html'" data-translate="product_details">Product Details</button>
+                    <button class="button-primary flex-1" onclick="event.stopPropagation(); addToCart('Smart Switch', 2500)" data-translate="add_to_cart">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card w-full max-w-xs" data-name="Smart Cleaner" data-category="cleaning" data-price="12000">
+                <img alt="Smart Cleaner" class="product-image mb-4" src="images/demo1 (2).jpg"/>
+                <h3 class="text-2xl font-semibold mb-2" data-translate="smart_cleaner">Smart Cleaner</h3>
+                <p class="text-gray-700 font-bold mb-3" data-translate="8000-15000_tk">8000-15000 TK</p>
+                <p class="text-gray-500 text-sm flex-grow mb-4" data-translate="effortless_cleaning_with_advanced_smart_sensors">Effortless cleaning with advanced smart sensors.</p>
+                <div class="mt-auto flex flex-col sm:flex-row gap-2">
+                    <button class="button-secondary flex-1" onclick="window.location.href='smart_cleaner.html'" data-translate="product_details">Product Details</button>
+                    <button class="button-primary flex-1" onclick="event.stopPropagation(); addToCart('Smart Cleaner', 12000)" data-translate="add_to_cart">Add to Cart</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="bg-blue-50 text-center text-sm text-gray-500 py-8">
+        <div class="mb-4 font-semibold text-blue-700 text-xl" data-translate="bytebot">ByteBot</div>
+        <nav class="space-x-4 mb-4">
+            <a class="hover:text-blue-600" href="index.html" data-translate="home">Home</a>
+            <a class="hover:text-blue-600" href="about_us_updated.html" data-translate="about_us">About Us</a>
+            <a class="hover:text-blue-600 active" href="products.html" data-translate="products">Products</a>
+            <a class="hover:text-blue-600" href="support.html" data-translate="support">Support</a>
+            <a href="dashboard.html" data-translate="dashboard">Dashboard</a>
+        </nav>
+        <p data-translate="rights_reserved">© 2025 ByteBot Inc. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // --- TRANSLATION DATA ---
+        const translations = {
+            en: { "en": "EN", "বাংলা": "বাংলা", "404": "404", "page_not_found": "Page Not Found", "the_specified_file_was_not_found_on_this_website_please_check_the_url_for_mistakes_and_try_again": "The specified file was not found on this website. Please check the URL for mistakes and try again.", "why_am_i_seeing_this?": "Why am I seeing this?", "home": "Home", "about_us": "About Us", "product_specifications": "Product Specifications", "products": "Products", "smarthome_dashboard": "Dashboard", "get_started": "Get Started", "product_details": "Product Details", "smart_cleaner": "Smart Cleaner", "8000-15000_tk": "8000-15,000 TK", "modular_design_–_swappable_cleaning_and_disinfection_units_for_easy_upgrades_and_repairs": "Modular Design – Swappable cleaning and disinfection units for easy upgrades and repairs.", "recycled_build_materials_–_eco-friendly_casing_made_from_recycled_polypropylene_and_abs_plastics": "Recycled Build Materials – Eco-friendly casing made from recycled polypropylene and ABS plastics.", "gyroscope-based_navigation_–_efficient_room_coverage_tailored_for_tight_cluttered_floor_plans": "Gyroscope-Based Navigation – Efficient room coverage tailored for tight, cluttered floor plans.", "ir_obstacle_avoidance_–_smooth_maneuvering_around_furniture_and_floor-level_barriers": "IR Obstacle Avoidance – Smooth maneuvering around furniture and floor-level barriers.", "controlled_spray_system_–_precision_dispensing_of_water_and_disinfectant_for_resource_efficiency": "Controlled Spray System – Precision dispensing of water and disinfectant for resource efficiency.", "offline_operation_–_core_functions_run_without_internet;_ideal_for_unstable_connectivity_regions": "Offline Operation – Core functions run without internet; ideal for unstable connectivity regions.", "accessible_-_bangla_interface_offline_zigbee_hub_sms_control": "Accessible - Bangla interface, offline Zigbee hub, SMS control.", "smart_switch": "Smart Switch", "1500-3000_tk": "1500-3000 TK", "smart_scheduling:_time-based_automated_switching": "Smart Scheduling: Time-based automated switching.", "manual_&_app_control:_physical_switch_and_mobile_app_operation": "Manual & App Control: Physical switch and mobile app operation.", "bangla_interface:_app_ui_and_voice_commands_in_bangla": "Bangla Interface: App UI and voice commands in Bangla.", "offline_functionality:_works_without_internet_using_local_zigbee_or_bluetooth": "Offline Functionality: Works without internet using local Zigbee or Bluetooth.", "energy_monitoring:_real-time_power_consumption_display": "Energy Monitoring: Real-time power consumption display.", "modular_design:_replaceable_switch_modules_and_expandable_setup": "Modular Design: Replaceable switch modules and expandable setup.", "eco-friendly_enclosure:_made_from_recycled_plastic_materials": "Eco-Friendly Enclosure: Made from recycled plastic materials.", "easy_installation": "Easy Installation", "back_to_products": "Back to Products", "our_mission": "Our Mission", "our_history": "Our History", "meet_the_team": "Meet the Team", "ajraf_fahim": "Ajraf Fahim", "product_design_and_development": "Product Design and Development", "md_atique_ashfak_arib": "Md Atique Ashfak Arib", "research_and_analysis": "Research and Analysis", "fayem_muktadir_rahman": "Fayem Muktadir Rahman", "software_development": "Software Development", "maimuna_farzana_dyuti": "Maimuna Farzana Dyuti", "marketing": "Marketing", "mosabbir_alam_joy": "Mosabbir Alam Joy", "business_strategy": "Business Strategy", "rooted_locally_built_securely_trusted_globally": "Rooted locally. Built securely. Trusted globally.", "explore_now": "Explore Now", "seamless_control": "Total Control, Ultimate Simplicity", "manage_all_your_devices_effortlessly_from_one_place_with_our_easy-to-use_mobile_app": "Manage your entire smart home ecosystem from a single, intuitive app. Effortless control is now at your fingertips, whether you're home or away.", "effortless_cleaning_with_advanced_smart_sensors": "Effortless cleaning with advanced smart sensors.", "smart_lighting": "Smart Lighting", "adjustable_lighting_controlled_via_your_smartphone": "Adjustable lighting controlled via your smartphone.", "smart_fan": "Smart Fan", "adjustable_fan_with_variable_speed_controlled_via_your_smartphone": "Adjustable fan with variable speed controlled via your smartphone.", "control_any_electrical_device_with_ease_": "Control any electrical device with ease.", "how_it_works": "How It Works", "smartly_upgrade_your_home": "Smartly Upgrade Your Home", "control_your_smart_home_anytime_anywhere": "Ready to Transform Your Home?", "download_the_app_to_manage_your_devices_on_the_go": "Download the ByteBot app today and step into the future of smart living.", "app_store": "App Store", "google_play": "Google Play", "support": "Support", "©_2025_bytebot_inc_all_rights_reserved": "© 2025 ByteBot Inc. All rights reserved.", "all_products": "All Products", "control_any_electrical_device_with_ease": "Control any electrical device with ease.", "sign_in": "Sign In", "dashboard": "Dashboard", "rights_reserved": "© 2025 ByteBot Inc. All rights reserved.", "search_products": "Search products...", "electronics": "Electronics", "cleaning": "Cleaning", "sort_by": "Sort by:", "featured_sort": "Featured", "price_low_sort": "Price: Low to High", "price_high_sort": "Price: High to Low", "newest_sort": "Newest", "add_to_cart": "Add to Cart", "our_products": "Our Products", "product_description": "Discover our range of smart devices designed to make your life easier and more efficient." },
+            bn: { "en": "EN", "বাংলা": "বাংলা", "404": "৪০৪", "page_not_found": "পৃষ্ঠা খুঁজে পাওয়া যায়নি", "the_specified_file_was_not_found_on_this_website_please_check_the_url_for_mistakes_and_try_again": "এই ওয়েবসাইটে নির্দিষ্ট ফাইলটি খুঁজে পাওয়া যায়নি। অনুগ্রহ করে URL ঠিক আছে কিনা যাচাই করুন এবং আবার চেষ্টা করুন।", "why_am_i_seeing_this?": "আমি এটা কেন দেখছি?", "home": "হোম", "about_us": "আমাদের সম্পর্কে", "product_specifications": "পণ্যের বিবরণ", "products": "পণ্যসমূহ", "smarthome_dashboard": "ড্যাশবোর্ড", "get_started": "শুরু করুন", "product_details": "পণ্যের বিস্তারিত", "smart_cleaner": "স্মার্ট ক্লিনার", "8000-15000_tk": "৮০০০-১৫০০০ টাকা", "modular_design_–_swappable_cleaning_and_disinfection_units_for_easy_upgrades_and_repairs": "মডুলার ডিজাইন – সহজে পরিবর্তনযোগ্য ক্লিনিং ও জীবাণুনাশক ইউনিট যা সহজ আপগ্রেড ও মেরামতের সুবিধা দেয়।", "recycled_build_materials_–_eco-friendly_casing_made_from_recycled_polypropylene_and_abs_plastics": "পুনর্ব্যবহৃত উপাদান – ইকো-ফ্রেন্ডলি আবরণ যা পুনর্ব্যবহৃত পলিপ্রোপিলিন ও ABS প্লাস্টিক দিয়ে তৈরি।", "gyroscope-based_navigation_–_efficient_room_coverage_tailored_for_tight_cluttered_floor_plans": "জাইরোস্কোপ-ভিত্তিক ন্যাভিগেশন – সংকীর্ণ ও ছড়ানো কক্ষ পরিকল্পনার জন্য কার্যকর কভারেজ।", "ir_obstacle_avoidance_–_smooth_maneuvering_around_furniture_and_floor-level_barriers": "IR বাধা পরিহার – আসবাবপত্র ও মেঝে-স্তরের বাধার চারপাশে সহজ চলাচল।", "controlled_spray_system_–_precision_dispensing_of_water_and_disinfectant_for_resource_efficiency": "নিয়ন্ত্রিত স্প্রে সিস্টেম – পানি ও জীবাণুনাশক সঠিকভাবে সরবরাহ করে সম্পদের দক্ষ ব্যবহার নিশ্চিত করে।", "offline_operation_–_core_functions_run_without_internet;_ideal_for_unstable_connectivity_regions": "অফলাইন অপারেশন – ইন্টারনেট ছাড়াও কাজ করে; দুর্বল সংযোগ অঞ্চলের জন্য উপযুক্ত।", "accessible_-_bangla_interface_offline_zigbee_hub_sms_control": "সুবিধাজনক – বাংলা ইন্টারফেস, অফলাইন Zigbee হাব ও SMS নিয়ন্ত্রণ।", "smart_switch": "স্মার্ট সুইচ", "1500-3000_tk": "১৫০০-৩০০০ টাকা", "smart_scheduling:_time-based_automated_switching": "স্মার্ট সময়সূচি: সময় অনুযায়ী স্বয়ংক্রিয় সুইচিং।", "manual_&_app_control:_physical_switch_and_mobile_app_operation": "ম্যানুয়াল ও অ্যাপ নিয়ন্ত্রণ: ফিজিক্যাল সুইচ ও মোবাইল অ্যাপ দ্বারা পরিচালনা।", "bangla_interface:_app_ui_and_voice_commands_in_bangla": "বাংলা ইন্টারফেস: অ্যাপ UI ও ভয়েস কমান্ড বাংলা ভাষায়।", "offline_functionality:_works_without_internet_using_local_zigbee_or_bluetooth": "অফলাইন কার্যক্ষমতা: স্থানীয় Zigbee বা ব্লুটুথ ব্যবহার করে ইন্টারনেট ছাড়াই কাজ করে।", "energy_monitoring:_real-time_power_consumption_display": "এনার্জি মনিটরিং: রিয়েল-টাইম বিদ্যুৎ ব্যবহারের প্রদর্শন।", "modular_design:_replaceable_switch_modules_and_expandable_setup": "মডুলার ডিজাইন: পরিবর্তনযোগ্য সুইচ মডিউল ও সম্প্রসারণযোগ্য সেটআপ।", "eco-friendly_enclosure:_made_from_recycled_plastic_materials": "পরিবেশবান্ধব আবরণ: পুনর্ব্যবহৃত প্লাস্টিক উপাদান দিয়ে তৈরি।", "easy_installation": "সহজ ইনস্টলেশন", "back_to_products": "পণ্যে ফিরে যান", "our_mission": "আমাদের লক্ষ্য", "our_history": "আমাদের ইতিহাস", "meet_the_team": "দলের সাথে পরিচিত হোন", "ajraf_fahim": "আজরাফ ফাহিম", "product_design_and_development": "পণ্য নকশা ও উন্নয়ন", "md_atique_ashfak_arib": "মোঃ আতিক আশফাক আরিব", "research_and_analysis": "গবেষণা ও বিশ্লেষণ", "fayem_muktadir_rahman": "ফায়েম মুক্তাদির রহমান", "software_development": "সফটওয়্যার উন্নয়ন", "maimuna_farzana_dyuti": "মাইমুনা ফারজানা দ্যুতি", "marketing": "মার্কেটিং", "mosabbir_alam_joy": "মোসাব্বির আলম জয়", "business_strategy": "ব্যবসায়িক কৌশল", "rooted_locally_built_securely_trusted_globally": "স্থানীয়ভাবে গড়ে ওঠা, নিরাপদে নির্মিত, বিশ্বব্যাপী বিশ্বাসযোগ্য।", "explore_now": "এখনই দেখুন", "seamless_control": "সম্পূর্ণ নিয়ন্ত্রণ, চূড়ান্ত সরলতা", "manage_all_your_devices_effortlessly_from_one_place_with_our_easy-to-use_mobile_app": "আপনার পুরো স্মার্ট হোম ইকোসিস্টেম একটিমাত্র স্বজ্ঞাত অ্যাপ থেকে পরিচালনা করুন। অনায়াস নিয়ন্ত্রণ এখন আপনার হাতের মুঠোয়, আপনি বাড়িতে বা বাইরে যেখানেই থাকুন না কেন।", "effortless_cleaning_with_advanced_smart_sensors": "উন্নত স্মার্ট সেন্সর দ্বারা সহজ পরিষ্কার।", "smart_lighting": "স্মার্ট লাইটিং", "adjustable_lighting_controlled_via_your_smartphone": "আপনার স্মার্টফোনের মাধ্যমে নিয়ন্ত্রণযোগ্য আলো।", "smart_fan": "স্মার্ট ফ্যান", "adjustable_fan_with_variable_speed_controlled_via_your_smartphone": "আপনার স্মার্টফোন দ্বারা নিয়ন্ত্রিত পরিবর্তনযোগ্য গতিসম্পন্ন ফ্যান।", "control_any_electrical_device_with_ease_": "সহজেই যেকোনো বৈদ্যুতিক ডিভাইস নিয়ন্ত্রণ করুন।", "how_it_works": "এটি কীভাবে কাজ করে", "smartly_upgrade_your_home": "স্মার্টভাবে আপনার ঘর আপগ্রেড করুন", "control_your_smart_home_anytime_anywhere": "আপনার ঘর পরিবর্তন করতে প্রস্তুত?", "download_the_app_to_manage_your_devices_on_the_go": "আজই বাইটবট অ্যাপটি ডাউনলোড করুন এবং স্মার্ট জীবনযাপনের ভবিষ্যতে প্রবেশ করুন।", "app_store": "অ্যাপ স্টোর", "google_play": "গুগল প্লে", "support": "সাপোর্ট", "©_2025_bytebot_inc_all_rights_reserved": "© ২০২৫ বাইটবট ইনক. সর্বস্বত্ব সংরক্ষিত।", "all_products": "সব পণ্য", "control_any_electrical_device_with_ease": "সহজেই যেকোনো বৈদ্যুতিক ডিভাইস নিয়ন্ত্রণ করুন।", "sign_in": "সাইন ইন করুন", "dashboard": "ড্যাশবোর্ড", "rights_reserved": "© ২০২৫ বাইটবট ইনক। সর্বস্বত্ব সংরক্ষিত।", "search_products": "পণ্য অনুসন্ধান করুন...", "electronics": "ইলেকট্রনিক্স", "cleaning": "ক্লিনিং", "sort_by": "সাজান:", "featured_sort": "বৈশিষ্ট্যযুক্ত", "price_low_sort": "মূল্য: কম থেকে বেশি", "price_high_sort": "মূল্য: বেশি থেকে কম", "newest_sort": "নতুন", "add_to_cart": "কার্টে যোগ করুন", "our_products": "আমাদের পণ্যসমূহ", "product_description": "আপনার জীবনকে সহজ এবং আরও কার্যকর করার জন্য ডিজাইন করা আমাদের স্মার্ট ডিভাইসগুলির পরিসর আবিষ্কার করুন।" }
+        };
+
+        let cart = []; // Initialize cart
+
+        // --- TRANSLATION LOGIC ---
+        function applyTranslations(lang) {
+            const langData = translations[lang];
+            if (!langData) return;
+
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (langData[key]) {
+                    element.innerHTML = langData[key];
+                }
+            });
+
+            document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-translate-placeholder');
+                if (langData[key]) {
+                    element.setAttribute('placeholder', langData[key]);
+                }
+            });
+        }
+
+        function setLanguage(lang) {
+            localStorage.setItem("language", lang);
+            document.documentElement.lang = lang;
+            document.getElementById("languageToggle").value = lang;
+            applyTranslations(lang);
+        }
+
+        // --- PAGE INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem("language") || "en";
+            const savedCart = JSON.parse(localStorage.getItem("bytebotCart")) || [];
+            cart = savedCart;
+            updateCartCount();
+            setLanguage(savedLang);
+
+            document.getElementById("languageToggle").addEventListener("change", (e) => {
+                setLanguage(e.target.value);
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        });
+
+        // --- PRODUCT PAGE FUNCTIONALITY ---
+        function searchProducts() {
+            const filter = document.getElementById('searchInput').value.toLowerCase();
+            const products = document.querySelectorAll('#productList .product-card');
+
+            products.forEach(product => {
+                const productName = product.getAttribute('data-name').toLowerCase();
+                product.style.display = productName.includes(filter) ? "" : "none";
+            });
+        }
+
+        function filterProducts(category) {
+            const products = document.querySelectorAll('#productList .product-card');
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.filter-btn[onclick="filterProducts('${category}')"]`).classList.add('active');
+
+            products.forEach(product => {
+                const productCategory = product.getAttribute('data-category');
+                product.style.display = (category === 'all' || productCategory === category) ? "" : "none";
+            });
+        }
+
+        function sortProducts(sortBy) {
+            const productList = document.getElementById('productList');
+            const products = Array.from(productList.querySelectorAll('.product-card'));
+
+            products.sort((a, b) => {
+                if (sortBy === 'price-low') {
+                    return parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price'));
+                } else if (sortBy === 'price-high') {
+                    return parseFloat(b.getAttribute('data-price')) - parseFloat(a.getAttribute('data-price'));
+                }
+                return 0;
+            });
+            
+            products.forEach(product => productList.appendChild(product));
+        }
+
+        // --- CART FUNCTIONALITY ---
+        function updateCartCount() {
+            document.getElementById('cartCount').innerText = cart.length;
+            localStorage.setItem("bytebotCart", JSON.stringify(cart));
+        }
+
+        function addToCart(productName, productPrice) {
+            cart.push({ name: productName, price: productPrice });
+            updateCartCount();
+            alert(`${productName} has been added to your cart!`);
+        }
+
+        function viewCart() {
+            if (cart.length === 0) {
+                alert("Your cart is empty.");
+                return;
+            }
+            const cartItems = cart.map(item => `${item.name} - ${item.price} TK`).join('\n');
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            alert(`You have ${cart.length} items in your cart:\n\n${cartItems}\n\nTotal: ${total} TK`);
+        }
+    </script>
+</body>
+</html>

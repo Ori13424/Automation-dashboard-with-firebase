@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteBot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    
+    <!-- Note: All CSS styles remain the same as your original file -->
+    <style>
+        :root {
+            --primary-color: #0096c7;
+            --primary-hover: #0077b6;
+            --accent-color: #48cae4;
+            --accent-hover: #00b4d8;
+            --text-dark: #212529;
+            --text-light: #6c757d;
+            --bg-main: #f0f7ff;
+            --bg-card: #ffffff;
+            --border-color: #e9ecef;
+            --shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
+            --shadow-hover: 0 12px 30px rgba(149, 157, 165, 0.15);
+            --success: #4ade80;
+            --danger: #f87171;
+            --warning: #fca311;
+             /* Pulse effect for important buttons */
+            --pulse-shadow-start: rgba(0, 119, 182, 0.4);
+            --pulse-shadow-end: rgba(0, 119, 182, 0.6);
+        }
+
+        html.dark {
+            --text-dark: #f8f9fa;
+            --text-light: #adb5bd;
+            --bg-main: #121212;
+            --bg-card: #1e1e1e;
+            --border-color: #343a40;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.3);
+            --pulse-shadow-start: rgba(72, 202, 228, 0.35);
+            --pulse-shadow-end: rgba(72, 202, 228, 0.5);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .dynamic-title {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.3s ease;
+        }
+        .dynamic-title:hover { transform: scale(1.03); }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes pulse {
+            0% { box-shadow: 0 4px 12px var(--pulse-shadow-start); }
+            50% { box-shadow: 0 6px 20px var(--pulse-shadow-end); }
+            100% { box-shadow: 0 4px 12px var(--pulse-shadow-start); }
+        }
+
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .slide-in-up { animation: slideInUp 0.5s ease-out forwards; }
+        .toast-notification { animation: slideInRight 0.5s ease, fadeOut 0.5s ease 4.5s forwards; }
+
+        /* Buttons */
+        .btn { padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s ease; text-align: center; }
+        .btn-primary { background-color: var(--primary-color); color: white; box-shadow: 0 4px 12px rgba(0, 119, 182, 0.4); }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-accent { background-color: var(--accent-color); color: white; }
+        .btn-accent:hover { background-color: var(--accent-hover); }
+        .btn-danger { background-color: var(--danger); color: white; }
+        .btn-danger:hover { background-color: #f76161; }
+        .btn-secondary { background-color: #e9ecef; color: var(--text-dark); }
+        .btn-secondary:hover { background-color: #dee2e6; }
+        html.dark .btn-secondary { background-color: #343a40; color: var(--text-dark); }
+        html.dark .btn-secondary:hover { background-color: #495057; }
+        .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+        .btn:active { transform: translateY(0px) scale(0.98); box-shadow: none; transition-duration: 0.1s; }
+        .btn-pulse { animation: pulse 2.5s ease-in-out infinite; }
+        
+        /* Tabs */
+        .tab-container { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; }
+        .tab { padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 500; color: var(--text-light); transition: all 0.3s ease; cursor: pointer; }
+        .tab:hover { background-color: #f1f3f5; color: var(--text-dark); }
+        html.dark .tab:hover { background-color: #2c2c2e; color: var(--text-dark); }
+        .tab-active { background-color: var(--primary-color); color: white !important; box-shadow: 0 4px 12px rgba(0, 119, 182, 0.4); }
+        
+        /* Forms & Modals */
+        .form-input, .form-select, .form-textarea { width: 100%; background-color: #f1f3f5; border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.75rem 1rem; color: var(--text-dark); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+        html.dark .form-input, html.dark .form-select, html.dark .form-textarea { background-color: #2c2c2e; border-color: #495057; color: var(--text-dark); }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.3); }
+        .modal-backdrop { background-color: rgba(0, 0, 0, 0.2); backdrop-filter: blur(5px); }
+        html.dark .modal-backdrop { background-color: rgba(0, 0, 0, 0.5); }
+        .modal-content { background-color: var(--bg-card); border-radius: 1rem; box-shadow: var(--shadow-hover); animation: slideInUp 0.4s ease-out; }
+
+        /* Employee Card Styles */
+        .employee-card .avatar { width: 4rem; height: 4rem; border-radius: 50%; object-fit: cover; border: 3px solid var(--border-color); }
+        .status-dot { width: 0.75rem; height: 0.75rem; border-radius: 50%; }
+        .status-dot.present { background-color: var(--success); }
+        .status-dot.away { background-color: var(--text-light); }
+
+        /* Meeting Room Card Styles */
+        .room-card.available { border-left: 5px solid var(--success); }
+        .room-card.occupied { border-left: 5px solid var(--danger); }
+
+        /* Project Card Styles */
+        .progress-bar-container { width: 100%; background-color: var(--border-color); border-radius: 9999px; overflow: hidden; }
+        .progress-bar { height: 0.75rem; background: linear-gradient(90deg, var(--accent-color), var(--primary-color)); transition: width 0.5s ease-in-out; border-radius: 9999px; }
+        .team-avatar { width: 2rem; height: 2rem; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-card); margin-left: -0.75rem; }
+
+        /* --- STYLES FOR DEVICE CARDS --- */
+        .device-card {
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+        }
+        .device-card.on {
+            background: linear-gradient(135deg, #48cae4, #0096c7);
+            color: white;
+            border-color: transparent;
+        }
+        .device-card.on .text-gray-500 { color: rgba(255, 255, 255, 0.8); }
+        html.dark .device-card.on .text-gray-500 { color: rgba(255, 255, 255, 0.8); }
+        .device-card.on .device-icon svg { stroke: white; }
+        .device-card .toggle-slider { background-color: #ccc; }
+        html.dark .device-card .toggle-slider { background-color: #495057; }
+        .device-card.on .toggle-slider { background-color: rgba(255, 255, 255, 0.4); }
+        .device-card .toggle-switch input:checked + .toggle-slider { background-color: var(--primary-color); }
+        .device-card.on .toggle-switch input:checked + .toggle-slider { background-color: #ffffff; }
+        .device-card .toggle-slider:before { background-color: white; }
+        html.dark .device-card .toggle-slider:before { background-color: #1e1e1e; }
+        .device-card.on .toggle-slider:before { background-color: var(--primary-color); }
+        .device-icon {
+            width: 3.5rem; height: 3.5rem; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; background-color: rgba(128, 128, 128, 0.08); transition: background-color 0.4s ease;
+        }
+        html.dark .device-icon { background-color: rgba(255, 255, 255, 0.05); }
+        .device-card.on .device-icon { background-color: rgba(255, 255, 255, 0.2); }
+        .device-icon svg { stroke: var(--text-dark); transition: stroke 0.4s ease; width: 1.75rem; height: 1.75rem; }
+        .toggle-switch { position: relative; display: inline-block; width: 52px; height: 30px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; transition: .4s; border-radius: 34px; }
+        .toggle-slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; transition: .4s; border-radius: 50%; }
+        input:checked + .toggle-slider:before { transform: translateX(22px); }
+
+        /* --- STYLES FOR DEVICE CONTROL MODAL --- */
+        .dial-container { position: relative; width: 220px; height: 220px; margin: 2rem auto; cursor: pointer; }
+        .dial-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: #e9ecef; box-shadow: inset 0 0 20px rgba(0,0,0,0.05); }
+        html.dark .dial-background { background: #1e1e1e; box-shadow: inset 0 0 20px rgba(0,0,0,0.2); }
+        .dial-progress { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; clip-path: circle(50%); }
+        .dial-center {
+            position: absolute; top: 15%; left: 15%; width: 70%; height: 70%; background: var(--bg-card); border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none;
+        }
+        .dial-value { font-size: 3rem; font-weight: 700; line-height: 1; color: var(--text-dark); }
+        .dial-value sup { font-size: 1.25rem; font-weight: 600; vertical-align: top; }
+        .dial-label { font-size: 0.8rem; color: var(--text-light); margin-top: 0.5rem; }
+        .mode-selector { display: flex; gap: 0.75rem; justify-content: center; }
+        .mode-button {
+            background: white; border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.75rem 0.5rem; width: 70px; height: 70px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;
+            font-weight: 500; color: var(--text-light); text-align: center;
+        }
+        html.dark .mode-button { background: #3a3a3c; }
+        .mode-button:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+        .mode-button.active { background: linear-gradient(45deg, var(--accent-color), var(--primary-color)); color: white; border-color: transparent; }
+        .mode-button svg { width: 24px; height: 24px; stroke: var(--text-dark); }
+        .mode-button.active svg { stroke: white; }
+        .power-button {
+            width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+            box-shadow: 0 8px 20px rgba(0, 119, 182, 0.3); color: white; display: flex; align-items: center; justify-content: center;
+            border: none; cursor: pointer; transition: all 0.3s ease; margin: 1.5rem auto 0;
+        }
+        .power-button:hover { transform: scale(1.05); }
+        .power-button.off { background: #e9ecef; color: var(--text-light); box-shadow: none; }
+        html.dark .power-button.off { background: #3a3a3c; color: var(--text-light); }
+        .power-button svg { width: 32px; height: 32px; }
+
+        /* Other Dark Mode Overrides */
+        html.dark .border-b, html.dark .border-t, html.dark .border-gray-200 { border-color: var(--border-color); }
+        html.dark .text-gray-800, html.dark .text-gray-700 { color: var(--text-dark); }
+        html.dark .text-gray-500, html.dark .text-gray-600 { color: var(--text-light); }
+        html.dark .bg-blue-100 { background-color: rgba(0, 150, 199, 0.2); }
+        html.dark .text-blue-500 { color: var(--accent-color); }
+        html.dark .bg-green-100 { background-color: rgba(74, 222, 128, 0.2); }
+        html.dark .text-green-500 { color: var(--success); }
+        html.dark .bg-indigo-100 { background-color: rgba(129, 140, 248, 0.2); }
+        html.dark .text-indigo-500 { color: #a5b4fc; }
+        html.dark .bg-yellow-100 { background-color: rgba(252, 163, 17, 0.2); }
+        html.dark .text-yellow-500 { color: #fca311; }
+        html.dark .bg-red-50 { background-color: rgba(248, 113, 113, 0.1); }
+        html.dark .bg-red-100 { background-color: rgba(248, 113, 113, 0.2); }
+        html.dark .text-red-600 { color: var(--danger); }
+        html.dark .bg-gray-100 { background-color: #2c2c2e; }
+        html.dark .hover\:bg-gray-200:hover { background-color: #3a3a3c; }
+        html.dark .bg-gray-50 { background-color: #2c2c2e; }
+        html.dark .bg-purple-500 { background-color: #8b5cf6; }
+        html.dark .hover\:bg-purple-600:hover { background-color: #7c3aed; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <header class="bg-card/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-screen-xl mx-auto p-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold dynamic-title">ByteBot</h1>
+                <p class="text-gray-500 mt-1">Your Intelligent Office Hub</p>
+            </div>
+            <div class="flex items-center space-x-4 md:space-x-6">
+                <button onclick="toggleTheme()" id="theme-toggle-btn" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 focus:outline-none"></button>
+                <div id="network-clock" class="text-right">
+                    <div class="text-2xl font-semibold text-gray-800">--:--:-- --</div>
+                    <div class="text-xs text-gray-500">Local Time</div>
+                </div>
+                <div class="text-right">
+                    <!-- User role will be displayed here -->
+                    <div class="text-sm text-gray-500 capitalize" id="display-user-role">Employee</div>
+                    <div class="font-semibold text-gray-800" id="display-user-name">Loading...</div>
+                </div>
+                <div id="user-avatar-container" class="w-12 h-12 bg-gradient-to-br from-primary-color to-accent-color rounded-full flex items-center justify-center text-xl text-white shadow-lg overflow-hidden"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-screen-xl mx-auto p-4 md:p-6">
+        <!-- Statistics cards remain unchanged -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 fade-in">
+             <div class="card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold" id="total-employees">0</div>
+                        <div class="text-sm text-gray-500 mt-1">Total Employees</div>
+                    </div>
+                    <div class="w-16 h-16 bg-blue-100 rounded-full text-blue-500 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold text-green-500" id="employees-present">0</div>
+                        <div class="text-sm text-gray-500 mt-1">Employees Present</div>
+                    </div>
+                    <div class="w-16 h-16 bg-green-100 rounded-full text-green-500 flex items-center justify-center">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold" style="color: var(--accent-color);" id="total-meeting-rooms">0</div>
+                        <div class="text-sm text-gray-500 mt-1">Meeting Rooms</div>
+                    </div>
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full text-indigo-500 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold text-yellow-500" id="active-projects">0</div>
+                        <div class="text-sm text-gray-500 mt-1">Active Projects</div>
+                    </div>
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full text-yellow-500 flex items-center justify-center">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                    </div>
+                </div>
+            </div>
+             <div class="card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold" id="total-devices">0</div>
+                        <div class="text-sm text-gray-500 mt-1">Total Devices</div>
+                    </div>
+                    <div class="w-16 h-16 bg-blue-100 rounded-full text-blue-500 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold text-green-500" id="active-devices">0</div>
+                        <div class="text-sm text-gray-500 mt-1">Active Devices</div>
+                    </div>
+                    <div class="w-16 h-16 bg-green-100 rounded-full text-green-500 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex flex-wrap space-x-2 mb-8 tab-container">
+            <button onclick="showTab('dashboard')" id="tab-dashboard" class="tab tab-active flex-grow">Dashboard</button>
+            <button onclick="showTab('devices')" id="tab-devices" class="tab flex-grow">Devices</button>
+            <button onclick="showTab('employees')" id="tab-employees" class="tab flex-grow">Employees</button>
+            <button onclick="showTab('rooms')" id="tab-rooms" class="tab flex-grow">Meeting Rooms</button>
+            <button onclick="showTab('projects')" id="tab-projects" class="tab flex-grow">Projects</button>
+            <button onclick="showTab('booking')" id="tab-booking" class="tab flex-grow">Book a Room</button>
+            <!-- Settings tab is now visible to all users -->
+            <button onclick="showTab('settings')" id="tab-settings" class="tab flex-grow">Settings</button>
+        </div>
+        
+        <div id="content-dashboard" class="tab-content fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <!-- Quick actions are now hidden by default -->
+                    <div class="manager-only hidden">
+                        <h2 class="text-2xl font-bold mb-4 text-gray-800">Quick Actions</h2>
+                        <div id="quick-actions-container" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <button onclick="showAddEmployeeModal()" class="card p-6 hover:border-primary-color text-center flex flex-col items-center justify-center space-y-2">
+                                <div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg></div>
+                                <div class="font-medium text-gray-700">Add Employee</div>
+                            </button>
+                            <button onclick="showTab('booking')" class="card p-6 hover:border-accent-color text-center flex flex-col items-center justify-center space-y-2">
+                                 <div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
+                                <div class="font-medium text-gray-700">Book a Room</div>
+                            </button>
+                            <button onclick="showAddProjectModal()" class="card p-6 hover:border-yellow-400 text-center flex flex-col items-center justify-center space-y-2">
+                                 <div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg></div>
+                                <div class="font-medium text-gray-700">New Project</div>
+                            </button>
+                        </div>
+                    </div>
+                     <h2 class="text-2xl font-bold mb-4 mt-8 text-gray-800">Upcoming Meetings</h2>
+                     <div id="upcoming-meetings-container" class="card p-6 space-y-4">
+                        </div>
+                </div>
+                <div class="lg:col-span-1">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Activity Log</h2>
+                    <div class="card p-6 max-h-96 overflow-y-auto">
+                        <div id="notifications-current" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="content-devices" class="tab-content hidden fade-in">
+            <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-gray-800">All Office Devices</h2>
+                <div class="flex items-center space-x-4">
+                    <select id="device-filter" onchange="renderAllDevices()" class="form-select">
+                        <option value="all">All Types</option>
+                        <option value="lights">Lights</option>
+                        <option value="climate">Climate</option>
+                        <option value="printer">Printers</option>
+                        <option value="projector">Projectors</option>
+                        <option value="coffeemaker">Coffee Makers</option>
+                    </select>
+                    <button onclick="showAddDeviceModal()" class="btn btn-primary whitespace-nowrap manager-only hidden">+ Add Device</button>
+                </div>
+            </div>
+            <div id="all-devices-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        </div>
+
+        <div id="content-employees" class="tab-content hidden fade-in">
+            <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-gray-800">All Employees</h2>
+                <div class="flex items-center space-x-4">
+                    <select id="employee-filter" onchange="renderEmployees()" class="form-select">
+                        <option value="all">All Departments</option>
+                    </select>
+                    <button onclick="showAddEmployeeModal()" class="btn btn-primary whitespace-nowrap manager-only hidden">+ Add Employee</button>
+                </div>
+            </div>
+            <div id="all-employees-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        </div>
+
+        <div id="content-rooms" class="tab-content hidden fade-in">
+             <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Meeting Rooms</h2>
+                <button onclick="showAddRoomModal()" class="btn btn-accent manager-only hidden">+ Add Room</button>
+            </div>
+            <div id="all-rooms-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <div id="content-projects" class="tab-content hidden fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Projects</h2>
+                <button onclick="showAddProjectModal()" class="btn bg-purple-500 hover:bg-purple-600 text-white manager-only hidden">+ New Project</button>
+            </div>
+            <div id="all-projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <div id="content-booking" class="tab-content hidden fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1">
+                    <div class="card p-8">
+                        <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">Book a Meeting Room</h2>
+                        <form id="booking-form" onsubmit="addBooking(event)">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="booking-title" class="block text-sm font-medium mb-2 text-gray-600">Meeting Title</label>
+                                    <input type="text" id="booking-title" class="form-input" placeholder="e.g., Q4 Strategy" required>
+                                </div>
+                                <div>
+                                    <label for="booking-room" class="block text-sm font-medium mb-2 text-gray-600">Room</label>
+                                    <select id="booking-room" class="form-select" required></select>
+                                </div>
+                                <div>
+                                    <label for="booking-date" class="block text-sm font-medium mb-2 text-gray-600">Date</label>
+                                    <input type="date" id="booking-date" class="form-input" required>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="booking-start-time" class="block text-sm font-medium mb-2 text-gray-600">Start Time</label>
+                                        <input type="time" id="booking-start-time" class="form-input" step="1800" required>
+                                    </div>
+                                    <div>
+                                        <label for="booking-end-time" class="block text-sm font-medium mb-2 text-gray-600">End Time</label>
+                                        <input type="time" id="booking-end-time" class="form-input" step="1800" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full mt-6 btn-pulse">Book Now</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="lg:col-span-2">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800">Today's Bookings</h2>
+                    <div id="todays-bookings-container" class="card p-6 space-y-3">
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="content-settings" class="tab-content hidden fade-in">
+             <h2 class="text-2xl font-bold mb-6 text-gray-800">Settings</h2>
+            <div class="card p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-gray-700">User Profile</h3>
+                <div id="user-profile-container"></div>
+                <!-- Sign Out button moved here to be accessible by all roles -->
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <button id="sign-out-btn" class="btn btn-danger w-full flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                        <span>Sign Out</span>
+                    </button>
+                </div>
+            </div>
+            <!-- System management is now hidden by default and only visible to admins -->
+            <div class="card p-6 admin-only hidden">
+                <h3 class="text-xl font-semibold mb-4 text-gray-700">System Management</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <button onclick="executeSystemAction('remove-all-employees')" class="card p-6 hover:border-red-400 flex flex-col items-center text-center"><div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="17" y1="11" x2="23" y2="11"></line></svg></div><div class="font-medium text-gray-700">Remove All Employees</div></button>
+                    <button onclick="executeSystemAction('remove-all-rooms')" class="card p-6 hover:border-red-400 flex flex-col items-center text-center"><div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5A2.5 2.5 0 0 1 5 4h14a2.5 2.5 0 0 1 2.5 2.5v11A2.5 2.5 0 0 1 19 20H5a2.5 2.5 0 0 1-2.5-2.5v-11Z"/><path d="m14 10-4 4"/><path d="m10 10 4 4"/></svg></div><div class="font-medium text-gray-700">Remove All Rooms</div></button>
+                    <button onclick="executeSystemAction('remove-all-projects')" class="card p-6 hover:border-red-400 flex flex-col items-center text-center"><div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="14" x2="14" y2="10"></line><line x1="14" y1="14" x2="10" y2="10"></line><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10 10-4.48 10-10z"></path></svg></div><div class="font-medium text-gray-700">Clear All Projects</div></button>
+                    <button onclick="executeSystemAction('remove-all-bookings')" class="card p-6 hover:border-red-400 flex flex-col items-center text-center"><div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="10" y1="14" x2="14" y2="18"></line><line x1="14" y1="14" x2="10" y2="18"></line></svg></div><div class="font-medium text-gray-700">Clear All Bookings</div></button>
+                    <button onclick="window.location.href='support.html'" class="card p-6 hover:border-blue-400 flex flex-col items-center text-center"><div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><div class="font-medium text-gray-700">Contact Support</div></button>
+                    <button onclick="executeSystemAction('reset-all-data')" class="card p-6 hover:border-red-400 col-span-full bg-red-50 hover:bg-red-100 flex items-center justify-center gap-4">
+                        <div class="w-12 h-12 text-red-600"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
+                        <div class="font-medium text-red-600">Reset All Data</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- All modals remain the same -->
+    <div id="add-employee-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50 p-4">
+        <div class="modal-content p-8 max-w-md w-full mx-4">
+            <h3 id="employee-modal-title" class="text-2xl font-bold mb-6 text-gray-800">Add New Employee</h3>
+            <form onsubmit="addOrUpdateEmployee(event)">
+                <input type="hidden" id="employee-id">
+                <div class="space-y-4">
+                    <div><label class="block text-sm font-medium mb-2 text-gray-600">Full Name</label><input type="text" id="employee-name" class="form-input" placeholder="e.g., Jane Smith" required></div>
+                    <div><label class="block text-sm font-medium mb-2 text-gray-600">Department</label><input type="text" id="employee-department" class="form-input" placeholder="e.g., Marketing" required></div>
+                    <div><label class="block text-sm font-medium mb-2 text-gray-600">Position</label><input type="text" id="employee-position" class="form-input" placeholder="e.g., Project Manager" required></div>
+                    <div><label class="block text-sm font-medium mb-2 text-gray-600">Profile Picture URL</label><input type="url" id="employee-pic" class="form-input" placeholder="https://example.com/image.png"></div>
+                </div>
+                <div class="flex space-x-4 mt-6"><button type="submit" id="employee-submit-btn" class="btn btn-primary flex-1">Add Employee</button><button type="button" onclick="hideAddEmployeeModal()" class="btn btn-secondary flex-1">Cancel</button></div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="add-room-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50 p-4">
+        <div class="modal-content p-8 max-w-md w-full mx-4">
+            <h3 id="room-modal-title" class="text-2xl font-bold mb-6 text-gray-800">Add New Meeting Room</h3>
+            <form onsubmit="addOrUpdateRoom(event)">
+                <input type="hidden" id="room-id">
+                <div class="space-y-4">
+                    <div><label class="block text-sm font-medium mb-2 text-gray-600">Room Name</label><input type="text" id="room-name" class="form-input" placeholder="e.g., Conference Room A" required></div>
+                    <div><label class="block text-sm font-medium mb-2 text-gray-600">Capacity</label><input type="number" id="room-capacity" class="form-input" placeholder="e.g., 12" required></div>
+                    <div><label class="block text-sm font-medium mb-2 text-gray-600">Equipment (comma-separated)</label><input type="text" id="room-equipment" class="form-input" placeholder="e.g., Projector, Whiteboard"></div>
+                </div>
+                <div class="flex space-x-4 mt-6"><button type="submit" id="room-submit-btn" class="btn btn-accent flex-1">Add Room</button><button type="button" onclick="hideAddRoomModal()" class="btn btn-secondary flex-1">Cancel</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="add-project-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50 p-4">
+        <div class="modal-content p-8 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 id="project-modal-title" class="text-2xl font-bold mb-6 text-gray-800">Create New Project</h3>
+            <form onsubmit="addOrUpdateProject(event)">
+                <input type="hidden" id="project-id">
+                <div class="space-y-4">
+                    <div><label class="block text-sm font-medium mb-2 text-gray-600">Project Name</label><input type="text" id="project-name" class="form-input" placeholder="e.g., Q4 Product Launch" required></div>
+                    <div><label class="block text-sm font-medium mb-2 text-gray-600">Project Description</label><textarea id="project-description" class="form-textarea" rows="3" placeholder="Describe the project goals..."></textarea></div>
+                    <div><label class="block text-sm font-medium mb-2 text-gray-600">Status</label><select id="project-status" class="form-select"><option value="Not Started">Not Started</option><option value="In Progress">In Progress</option><option value="Completed">Completed</option></select></div>
+                    <div><label class="block text-sm font-medium mb-2 text-gray-600">Completion (%)</label><input type="range" id="project-progress" class="w-full" min="0" max="100" value="0"></div>
+                    <div><label class="block text-sm font-medium mb-2 text-gray-600">Assign Team Members</label><div id="project-team-list" class="max-h-40 overflow-y-auto bg-gray-50 border border-gray-200 rounded-lg p-2 space-y-1"></div></div>
+                </div>
+                <div class="flex space-x-4 mt-6"><button type="submit" id="project-submit-btn" class="btn bg-purple-500 hover:bg-purple-600 text-white flex-1">Create Project</button><button type="button" onclick="hideAddProjectModal()" class="btn btn-secondary flex-1">Cancel</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50 p-4"><div class="modal-content p-8 max-w-md w-full mx-4"><h3 class="text-xl font-bold mb-4">Are you sure?</h3><p id="confirmation-message" class="text-gray-600 mb-6">This action cannot be undone.</p><div class="flex space-x-4 mt-6"><button id="confirm-action-btn" class="btn btn-danger flex-1">Confirm</button><button onclick="hideConfirmationModal()" class="btn btn-secondary flex-1">Cancel</button></div></div></div>
+
+    <div id="device-control-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50 p-4">
+        <div class="modal-content p-6 relative w-full max-w-sm">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-gray-800" id="device-control-title">Device Name</h3>
+                <button onclick="hideDeviceControlModal()" class="text-gray-400 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <p class="text-sm text-gray-500 -mt-4 mb-4" id="device-control-location">Location</p>
+            <div id="device-controls-container" class="mt-4"></div>
+             <div class="mt-8 pt-4 border-t border-gray-200 grid grid-cols-2 gap-2 edit-controls hidden">
+                <button id="device-remove-btn" class="btn btn-danger">Remove</button>
+                <button onclick="hideDeviceControlModal()" class="btn btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="add-device-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50 p-4">
+        <div class="modal-content p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800">Add New Device</h3>
+            <form onsubmit="event.preventDefault(); addOrUpdateDevice(event)">
+                <input type="hidden" id="device-id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600">Device Name</label>
+                        <input type="text" id="device-name" class="form-input" placeholder="e.g., Main Projector" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600">Device Type</label>
+                        <select id="device-type" class="form-select">
+                            <option value="lights">Office Light</option>
+                            <option value="climate">Office Climate</option>
+                            <option value="printer">Printer</option>
+                            <option value="projector">Projector</option>
+                            <option value="coffeemaker">Coffee Maker</option>
+                            <option value="blinds">Smart Blinds</option>
+                            <option value="camera">Security Camera</option>
+                            <option value="lock">Smart Lock</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600">Location</label>
+                        <select id="device-location" class="form-select"></select>
+                    </div>
+                </div>
+                <div class="flex space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary flex-1">Add Device</button>
+                    <button type="button" onclick="hideAddDeviceModal()" class="btn btn-secondary flex-1">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-4 right-4 z-[100] w-full max-w-xs space-y-3"></div>
+
+   <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, writeBatch, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+// --- FIREBASE CONFIGURATION ---
+// TODO: Replace this with your own Firebase project configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDbM0h5sLUauQ4xkT3ymMiGqhkM45mb5oU", 
+    authDomain: "home-dashboard-cca63.firebaseapp.com",
+    projectId: "home-dashboard-cca63",
+    storageBucket: "home-dashboard-cca63.firebasestorage.app",
+    messagingSenderId: "285882468205",
+    appId: "1:285882468205:web:2bc1103425d549bad2fc64",
+    measurementId: "G-ZB2VMHQ7DX"
+};
+
+// --- FIREBASE INITIALIZATION ---
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+let userId;
+let userRole = 'employee'; // Default role
+
+// --- DATA STORE & GLOBAL VARIABLES ---
+let employees = [];
+let meetingRooms = [];
+let projects = [];
+let bookings = [];
+let devices = [];
+let userProfile = null;
+let currentNotifications = [];
+let initialDataLoaded = false;
+let networkTimeInterval;
+let currentDeviceId = null;
+
+// --- ICONS ---
+const themeIcons = {
+    moon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`,
+    sun: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 6a6 6 0 100 12 6 6 0 000-12z"></path></svg>`
+};
+
+// --- CORE INITIALIZATION & AUTHENTICATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    applyTheme();
+    initializeClock();
+    showNotification('Connecting to your dashboard...', 'info');
+});
+
+// In office.html
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        userId = user.uid;
+        
+        // START: Add this verification block
+        const userDocRef = doc(db, 'users', userId);
+        try {
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists() && userDocSnap.data().accountType === 'office') {
+                // User is correct, proceed to load the dashboard
+                userProfile = userDocSnap.data();
+                userRole = userProfile.role || 'employee';
+                applyRolePermissions();
+                setupFirestoreListeners();
+            } else {
+                // Wrong account type or no profile, redirect
+                alert('This is not an Office account. Redirecting to login.');
+                await signOut(auth);
+                window.location.href = 'auth.html';
+            }
+        } catch (error) {
+            console.error("Error verifying user account type:", error);
+            await signOut(auth);
+            window.location.href = 'auth.html';
+        }
+        // END: Add this verification block
+        
+    } else {
+        // Store the current page to redirect back after login
+        localStorage.setItem('redirectPath', 'office.html');
+        window.location.href = 'auth.html';
+    }
+});
+
+// --- NEW: ROLE-BASED ACCESS CONTROL ---
+function applyRolePermissions() {
+    // Hide all role-specific elements first to reset the view
+    document.querySelectorAll('.admin-only, .manager-only, .edit-controls').forEach(el => el.classList.add('hidden'));
+
+    // Show elements based on role
+    if (userRole === 'admin') {
+        document.querySelectorAll('.admin-only, .manager-only, .edit-controls').forEach(el => el.classList.remove('hidden'));
+    } else if (userRole === 'manager') {
+        document.querySelectorAll('.manager-only, .edit-controls').forEach(el => el.classList.remove('hidden'));
+    }
+    // 'employee' role sees nothing extra by default
+}
+
+
+// --- SETUP FIRESTORE LISTENERS ---
+function setupFirestoreListeners() {
+    if (!userId) return;
+    const collectionsToSync = {
+        'employees': (data) => { employees = data; },
+        'meetingRooms': (data) => { meetingRooms = data; },
+        'projects': (data) => { projects = data; },
+        'bookings': (data) => { bookings = data; },
+        'devices': (data) => { devices = data; }
+    };
+    
+    Object.entries(collectionsToSync).forEach(([colName, setData]) => {
+        onSnapshot(collection(db, 'users', userId, colName), (snapshot) => {
+            const dataArray = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setData(dataArray);
+            if (!initialDataLoaded) {
+                 initialDataLoaded = true; // Mark as loaded on first data receive
+                 showNotification('Dashboard loaded successfully!', 'success');
+            }
+            renderAll();
+        });
+    });
+}
+
+// --- MAKE FUNCTIONS GLOBALLY ACCESSIBLE ---
+Object.assign(window, {
+    showTab, toggleTheme,
+    showAddEmployeeModal, hideAddEmployeeModal, addOrUpdateEmployee,
+    showAddRoomModal, hideAddRoomModal, addOrUpdateRoom,
+    showAddProjectModal, hideAddProjectModal, addOrUpdateProject,
+    addBooking,
+    confirmRemove, executeSystemAction, hideConfirmationModal,
+    renderEmployees,
+    saveUserProfile, deleteUserProfile,
+    showAddDeviceModal, hideAddDeviceModal, addOrUpdateDevice,
+    renderAllDevices, openDeviceControl, hideDeviceControlModal,
+    toggleDevice, updateDeviceProperty,
+    updateWorkHours, toggleEmployeePresence,
+});
+
+// --- EVENT LISTENERS ---
+document.getElementById('sign-out-btn').addEventListener('click', () => {
+    // Store the origin page before signing out
+    localStorage.setItem('redirectPath', 'office.html');
+
+    showNotification('Signing out...', 'info');
+    signOut(auth).catch(error => showNotification(`Sign out error: ${error.message}`, 'error'));
+});
+// --- THEME ---
+function applyTheme() {
+    const theme = localStorage.getItem('workwiseTheme') || 'light';
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    document.getElementById('theme-toggle-btn').innerHTML = theme === 'dark' ? themeIcons.sun : themeIcons.moon;
+}
+
+function toggleTheme() {
+    const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+    localStorage.setItem('workwiseTheme', newTheme);
+    applyTheme();
+}
+
+// --- MAIN RENDER FUNCTION ---
+function renderAll() {
+    if (!userId) return;
+    updateHeaderProfile();
+    updateStats();
+    
+    const activeTab = document.querySelector('.tab-active').id.replace('tab-', '');
+    switch(activeTab) {
+        case 'dashboard': renderDashboard(); break;
+        case 'devices': renderAllDevices(); break;
+        case 'employees': renderEmployees(); break;
+        case 'rooms': renderMeetingRooms(); break;
+        case 'projects': renderProjects(); break;
+        case 'booking': renderBookingPage(); break;
+        case 'settings': renderUserProfile(); break;
+    }
+    renderCurrentNotifications();
+}
+
+// --- RENDER UI COMPONENTS ---
+function updateStats() {
+    document.getElementById('total-employees').textContent = employees.length;
+    document.getElementById('employees-present').textContent = employees.filter(e => e.isPresent).length;
+    document.getElementById('total-meeting-rooms').textContent = meetingRooms.length;
+    document.getElementById('active-projects').textContent = projects.filter(p => p.status === 'In Progress').length;
+    document.getElementById('total-devices').textContent = devices.length;
+    document.getElementById('active-devices').textContent = devices.filter(d => d.status).length;
+}
+
+function updateHeaderProfile() {
+    if (!userProfile) return;
+    document.getElementById('display-user-name').textContent = userProfile.name;
+    document.getElementById('display-user-role').textContent = userRole; // Display role
+    const userAvatarContainer = document.getElementById('user-avatar-container');
+    if(userProfile.picUrl) {
+         userAvatarContainer.innerHTML = `<img src="${userProfile.picUrl}" alt="User Avatar" class="w-full h-full object-cover">`;
+    } else {
+         userAvatarContainer.innerHTML = `<span>${userProfile.name ? userProfile.name.charAt(0).toUpperCase() : ''}</span>`;
+    }
+}
+    
+function renderDashboard() {
+    renderUpcomingMeetings();
+}
+
+function renderUpcomingMeetings() {
+    const container = document.getElementById('upcoming-meetings-container');
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+    
+    const upcoming = bookings
+        .filter(b => b.date === todayStr && new Date(`${b.date}T${b.startTime}`) > now)
+        .sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+    if (upcoming.length === 0) {
+        container.innerHTML = `<p class="text-gray-500 text-center">No more meetings scheduled for today.</p>`;
+        return;
+    }
+
+    container.innerHTML = upcoming.map(booking => {
+        const room = meetingRooms.find(r => r.id === booking.roomId);
+        return `
+            <div class="border-l-4 border-accent-color pl-4 py-2">
+                <p class="font-bold text-lg text-gray-800">${booking.title}</p>
+                <p class="text-sm text-gray-600">${room?.name || 'Unknown Room'}</p>
+                <p class="text-sm text-gray-500">${formatTime(booking.startTime)} - ${formatTime(booking.endTime)}</p>
+            </div>`;
+    }).join('');
+}
+
+function renderEmployees() {
+    const grid = document.getElementById('all-employees-grid');
+    const departmentFilter = document.getElementById('employee-filter');
+    const selectedDept = departmentFilter.value;
+
+    const departments = [...new Set(employees.map(e => e.department))];
+    departmentFilter.innerHTML = `<option value="all">All Departments</option>` +
+        departments.map(dept => `<option value="${dept}" ${dept === selectedDept ? 'selected' : ''}>${dept}</option>`).join('');
+
+    const employeesToRender = employees.filter(e => selectedDept === 'all' || e.department === selectedDept);
+
+    if (employeesToRender.length === 0) {
+        grid.innerHTML = `<p class="text-gray-500 col-span-full text-center py-10">No employees found.</p>`;
+        return;
+    }
+    grid.innerHTML = employeesToRender.map(emp => `
+        <div class="card p-4 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center space-x-4">
+                    <img src="${emp.picUrl || 'https://i.pravatar.cc/150?u=' + emp.id}" alt="${emp.name}" class="avatar">
+                    <div class="flex-grow">
+                        <h3 class="font-bold text-lg text-gray-800">${emp.name}</h3>
+                        <p class="text-sm text-gray-600">${emp.position}</p>
+                        <p class="text-xs text-gray-500">${emp.department}</p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-200 space-y-3">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="font-medium text-gray-700">Status:</span>
+                        <div class="flex items-center space-x-2">
+                            <div class="status-dot ${emp.isPresent ? 'present' : 'away'}"></div>
+                            <span>${emp.isPresent ? 'Present' : 'Away'}</span>
+                            <button class="btn btn-secondary !p-1 text-xs edit-controls hidden" onclick="toggleEmployeePresence('${emp.id}')">Toggle</button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="font-medium text-gray-700">Hours Today:</span>
+                        <div class="flex items-center space-x-2">
+                            <button class="btn btn-secondary !p-1.5 leading-none edit-controls hidden" onclick="updateWorkHours('${emp.id}', -0.5)">-</button>
+                            <span class="font-semibold text-base w-8 text-center">${emp.workHoursToday || 0}</span>
+                            <button class="btn btn-secondary !p-1.5 leading-none edit-controls hidden" onclick="updateWorkHours('${emp.id}', 0.5)">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="flex space-x-2 mt-4 pt-4 border-t border-gray-200 edit-controls hidden">
+                <button class="btn btn-secondary !p-2 flex-1" onclick="showAddEmployeeModal('${emp.id}')">Edit</button>
+                <button class="btn btn-danger !p-2 flex-1" onclick="confirmRemove('employees', '${emp.id}', '${emp.name}')">Remove</button>
+            </div>
+        </div>`).join('');
+    // Re-apply permissions to newly rendered elements
+    applyRolePermissions();
+}
+
+function renderMeetingRooms() {
+    const grid = document.getElementById('all-rooms-grid');
+    if (meetingRooms.length === 0) {
+        grid.innerHTML = `<p class="text-gray-500 col-span-full text-center py-10">No meeting rooms found.</p>`;
+        return;
+    }
+
+    const now = new Date();
+    const currentTimeStr = now.toTimeString().substring(0, 5);
+    const todayStr = now.toISOString().split('T')[0];
+
+    grid.innerHTML = meetingRooms.map(room => {
+        const isOccupied = bookings.some(b => b.roomId === room.id && b.date === todayStr && currentTimeStr >= b.startTime && currentTimeStr < b.endTime);
+        const statusClass = isOccupied ? 'occupied' : 'available';
+        const statusText = isOccupied ? 'Occupied' : 'Available';
+        
+        return `
+            <div class="card p-6 room-card ${statusClass}">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800">${room.name}</h3>
+                        <p class="text-sm text-gray-500">Capacity: ${room.capacity}</p>
+                    </div>
+                    <div class="px-3 py-1 rounded-full text-sm font-semibold ${isOccupied ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">
+                        ${statusText}
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 mt-4">Equipment: ${room.equipment || 'None'}</p>
+                <div class="flex space-x-2 mt-4 pt-4 border-t border-gray-200 edit-controls hidden">
+                    <button class="btn btn-secondary !p-2 flex-1" onclick="showAddRoomModal('${room.id}')">Edit</button>
+                    <button class="btn btn-danger !p-2 flex-1" onclick="confirmRemove('meetingRooms', '${room.id}', '${room.name}')">Remove</button>
+                </div>
+            </div>`;
+    }).join('');
+    applyRolePermissions();
+}
+    
+function renderProjects() {
+    const grid = document.getElementById('all-projects-grid');
+    if (projects.length === 0) {
+        grid.innerHTML = `<p class="text-gray-500 col-span-full text-center py-10">No projects found.</p>`;
+        return;
+    }
+    grid.innerHTML = projects.map(proj => {
+        const teamMembers = (proj.team || []).map(id => employees.find(e => e.id === id)).filter(Boolean);
+        const statusColors = { "Not Started": "bg-gray-200", "In Progress": "bg-yellow-400", "Completed": "bg-green-500" };
+        return `
+            <div class="card p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-xl font-semibold text-gray-800">${proj.name}</h3>
+                        <span class="text-xs font-bold px-2 py-1 rounded ${statusColors[proj.status] || 'bg-gray-200'}">${proj.status}</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-4 h-10 overflow-hidden">${proj.description || 'No description.'}</p>
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs font-semibold text-gray-600 mb-1"><span>Progress</span><span>${proj.progress || 0}%</span></div>
+                        <div class="progress-bar-container"><div class="progress-bar" style="width: ${proj.progress || 0}%"></div></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                         <p class="text-sm text-gray-500">Team:</p>
+                         <div class="flex -space-x-3">
+                            ${teamMembers.map(tm => `<img src="${tm.picUrl || 'https://i.pravatar.cc/150?u=' + tm.id}" title="${tm.name}" class="team-avatar">`).join('')}
+                         </div>
+                    </div>
+                </div>
+                <div class="flex space-x-2 mt-4 pt-4 border-t border-gray-200 edit-controls hidden">
+                    <button class="btn btn-secondary !p-2 flex-1" onclick="showAddProjectModal('${proj.id}')">Edit</button>
+                    <button class="btn btn-danger !p-2 flex-1" onclick="confirmRemove('projects', '${proj.id}', '${proj.name}')">Remove</button>
+                </div>
+            </div>`;
+    }).join('');
+    applyRolePermissions();
+}
+
+function renderBookingPage() {
+    const roomSelect = document.getElementById('booking-room');
+    roomSelect.innerHTML = meetingRooms.map(r => `<option value="${r.id}">${r.name} (Capacity: ${r.capacity})</option>`).join('');
+    
+    const dateInput = document.getElementById('booking-date');
+    if (!dateInput.value) {
+        dateInput.value = new Date().toISOString().split('T')[0];
+    }
+
+    const container = document.getElementById('todays-bookings-container');
+    const todayStr = new Date().toISOString().split('T')[0];
+    const todaysBookings = bookings
+        .filter(b => b.date === todayStr)
+        .sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+    if (todaysBookings.length === 0) {
+        container.innerHTML = `<p class="text-gray-500 text-center">No rooms booked for today.</p>`;
+        return;
+    }
+
+    container.innerHTML = todaysBookings.map(booking => {
+        const room = meetingRooms.find(r => r.id === booking.roomId);
+        return `
+            <div class="bg-gray-50 dark:bg-gray-100 p-3 rounded-lg flex justify-between items-center">
+                <div>
+                    <p class="font-semibold text-gray-800">${booking.title}</p>
+                    <p class="text-sm text-gray-600">${room?.name || 'Unknown Room'}</p>
+                    <p class="text-xs text-gray-500">${formatTime(booking.startTime)} - ${formatTime(booking.endTime)}</p>
+                </div>
+                <button class="btn btn-danger !p-2 edit-controls hidden" onclick="confirmRemove('bookings', '${booking.id}', '${booking.title}')">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+            </div>
+        `;
+    }).join('');
+    applyRolePermissions();
+}
+    
+// --- MODAL & FORM LOGIC (Functions are the same, just called from permissioned buttons) ---
+function showAddEmployeeModal(employeeId = null) {
+    const modal = document.getElementById('add-employee-modal');
+    const form = modal.querySelector('form');
+    form.reset();
+    document.getElementById('employee-id').value = '';
+    if (employeeId) {
+        const emp = employees.find(e => e.id === employeeId);
+        if (!emp) return;
+        document.getElementById('employee-modal-title').textContent = 'Edit Employee';
+        document.getElementById('employee-submit-btn').textContent = 'Save Changes';
+        document.getElementById('employee-id').value = emp.id;
+        document.getElementById('employee-name').value = emp.name;
+        document.getElementById('employee-department').value = emp.department;
+        document.getElementById('employee-position').value = emp.position;
+        document.getElementById('employee-pic').value = emp.picUrl;
+    } else {
+        document.getElementById('employee-modal-title').textContent = 'Add New Employee';
+        document.getElementById('employee-submit-btn').textContent = 'Add Employee';
+    }
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+function hideAddEmployeeModal() { document.getElementById('add-employee-modal').classList.add('hidden'); }
+async function addOrUpdateEmployee(event) {
+    event.preventDefault();
+    if (!userId) return;
+    const employeeId = document.getElementById('employee-id').value;
+    const employeeData = {
+        name: document.getElementById('employee-name').value.trim(),
+        department: document.getElementById('employee-department').value.trim(),
+        position: document.getElementById('employee-position').value.trim(),
+        picUrl: document.getElementById('employee-pic').value.trim(),
+    };
+    try {
+        if (employeeId) {
+            await updateDoc(doc(db, 'users', userId, 'employees', employeeId), employeeData);
+            showNotification('Employee updated!', 'success');
+        } else {
+            employeeData.isPresent = false;
+            employeeData.workHoursToday = 0;
+            // Using setDoc with a generated ID
+            const newEmployeeRef = doc(collection(db, 'users', userId, 'employees'));
+            await setDoc(newEmployeeRef, employeeData);
+            showNotification('Employee added!', 'success');
+        }
+        hideAddEmployeeModal();
+    } catch (e) { console.error(e); showNotification('Failed to save employee data.', 'error'); }
+}
+
+function showAddRoomModal(roomId = null) {
+    const modal = document.getElementById('add-room-modal');
+    modal.querySelector('form').reset();
+    document.getElementById('room-id').value = '';
+    if (roomId) {
+        const room = meetingRooms.find(r => r.id === roomId);
+        if (!room) return;
+        document.getElementById('room-modal-title').textContent = 'Edit Meeting Room';
+        document.getElementById('room-submit-btn').textContent = 'Save Changes';
+        document.getElementById('room-id').value = room.id;
+        document.getElementById('room-name').value = room.name;
+        document.getElementById('room-capacity').value = room.capacity;
+        document.getElementById('room-equipment').value = room.equipment;
+    } else {
+        document.getElementById('room-modal-title').textContent = 'Add New Meeting Room';
+        document.getElementById('room-submit-btn').textContent = 'Add Room';
+    }
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+function hideAddRoomModal() { document.getElementById('add-room-modal').classList.add('hidden'); }
+async function addOrUpdateRoom(event) {
+    event.preventDefault();
+    if (!userId) return;
+    const roomId = document.getElementById('room-id').value;
+    const roomData = {
+        name: document.getElementById('room-name').value.trim(),
+        capacity: parseInt(document.getElementById('room-capacity').value),
+        equipment: document.getElementById('room-equipment').value.trim(),
+    };
+    try {
+        if (roomId) {
+            await updateDoc(doc(db, 'users', userId, 'meetingRooms', roomId), roomData);
+            showNotification('Meeting room updated!', 'success');
+        } else {
+            const newRoomRef = doc(collection(db, 'users', userId, 'meetingRooms'));
+            await setDoc(newRoomRef, roomData);
+            showNotification('Meeting room added!', 'success');
+        }
+        hideAddRoomModal();
+    } catch (e) { showNotification('Failed to save room data.', 'error'); }
+}
+
+function showAddProjectModal(projectId = null) {
+    const modal = document.getElementById('add-project-modal');
+    modal.querySelector('form').reset();
+    document.getElementById('project-id').value = '';
+    
+    const teamList = document.getElementById('project-team-list');
+    teamList.innerHTML = employees.length > 0 ? employees.map(emp => `
+        <label class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer">
+            <input type="checkbox" name="project-team" value="${emp.id}" class="h-4 w-4">
+            <span>${emp.name} (${emp.department})</span>
+        </label>`).join('') : '<p class="text-gray-500">No employees available.</p>';
+    
+    if (projectId) {
+        const proj = projects.find(p => p.id === projectId);
+        if (!proj) return;
+        document.getElementById('project-modal-title').textContent = 'Edit Project';
+        document.getElementById('project-submit-btn').textContent = 'Save Changes';
+        document.getElementById('project-id').value = proj.id;
+        document.getElementById('project-name').value = proj.name;
+        document.getElementById('project-description').value = proj.description;
+        document.getElementById('project-status').value = proj.status;
+        document.getElementById('project-progress').value = proj.progress || 0;
+        (proj.team || []).forEach(teamMemberId => {
+            const checkbox = teamList.querySelector(`input[value="${teamMemberId}"]`);
+            if (checkbox) checkbox.checked = true;
+        });
+    } else {
+        document.getElementById('project-modal-title').textContent = 'Create New Project';
+        document.getElementById('project-submit-btn').textContent = 'Create Project';
+    }
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+function hideAddProjectModal() { document.getElementById('add-project-modal').classList.add('hidden'); }
+async function addOrUpdateProject(event) {
+    event.preventDefault();
+    if (!userId) return;
+    const projectId = document.getElementById('project-id').value;
+    const projectData = {
+        name: document.getElementById('project-name').value.trim(),
+        description: document.getElementById('project-description').value.trim(),
+        status: document.getElementById('project-status').value,
+        progress: document.getElementById('project-progress').value,
+        team: Array.from(document.querySelectorAll('input[name="project-team"]:checked')).map(cb => cb.value)
+    };
+    try {
+        if (projectId) {
+            await updateDoc(doc(db, 'users', userId, 'projects', projectId), projectData);
+            showNotification('Project updated!', 'success');
+        } else {
+            const newProjectRef = doc(collection(db, 'users', userId, 'projects'));
+            await setDoc(newProjectRef, projectData);
+            showNotification('Project created!', 'success');
+        }
+        hideAddProjectModal();
+    } catch (e) { showNotification('Failed to save project data.', 'error'); }
+}
+
+async function addBooking(event) {
+    event.preventDefault();
+    if (!userId) return;
+    const newBooking = {
+        title: document.getElementById('booking-title').value.trim(),
+        roomId: document.getElementById('booking-room').value,
+        date: document.getElementById('booking-date').value,
+        startTime: document.getElementById('booking-start-time').value,
+        endTime: document.getElementById('booking-end-time').value,
+    };
+
+    if (newBooking.endTime <= newBooking.startTime) {
+        return showNotification('End time must be after start time.', 'error');
+    }
+
+    const isConflict = bookings.some(b => 
+        b.roomId === newBooking.roomId && 
+        b.date === newBooking.date &&
+        (newBooking.startTime < b.endTime && newBooking.endTime > b.startTime)
+    );
+
+    if (isConflict) {
+        return showNotification('This time slot is already booked for this room.', 'error');
+    }
+    
+    try {
+        const newBookingRef = doc(collection(db, 'users', userId, 'bookings'));
+        await setDoc(newBookingRef, newBooking);
+        showNotification('Room booked successfully!', 'success');
+        event.target.reset();
+    } catch (e) {
+        showNotification('Failed to book room.', 'error');
+    }
+}
+    
+// --- ACTIONS & HELPERS ---
+async function toggleEmployeePresence(employeeId) {
+    if (!userId) return;
+    const employee = employees.find(e => e.id === employeeId);
+    if (!employee) return;
+    try {
+        await updateDoc(doc(db, 'users', userId, 'employees', employeeId), { isPresent: !employee.isPresent });
+        showNotification(`${employee.name} is now marked as ${!employee.isPresent ? 'Present' : 'Away'}.`, 'info');
+    } catch (e) {
+        showNotification('Failed to update presence.', 'error');
+    }
+}
+    
+async function updateWorkHours(employeeId, change) {
+    if (!userId) return;
+    const employee = employees.find(e => e.id === employeeId);
+    if (!employee) return;
+    const currentHours = employee.workHoursToday || 0;
+    const newHours = Math.max(0, currentHours + change);
+    try {
+        await updateDoc(doc(db, 'users', userId, 'employees', employeeId), { workHoursToday: newHours });
+    } catch (e) {
+        showNotification('Failed to update work hours.', 'error');
+    }
+}
+
+function confirmRemove(collectionName, docId, name) {
+    showConfirmationModal(`Are you sure you want to remove "${name}"?`, async () => {
+        if (!userId) return;
+        try {
+            await deleteDoc(doc(db, 'users', userId, collectionName, docId));
+            showNotification(`"${name}" was removed.`, 'info');
+            hideDeviceControlModal();
+        } catch (e) {
+            showNotification('Failed to remove item.', 'error');
+        }
+    });
+}
+
+function showConfirmationModal(message, onConfirm) {
+    const modal = document.getElementById('confirmation-modal');
+    modal.querySelector('#confirmation-message').textContent = message;
+    const confirmBtn = modal.querySelector('#confirm-action-btn');
+    // Replace the button to remove old event listeners
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    newConfirmBtn.addEventListener('click', () => { onConfirm(); hideConfirmationModal(); });
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+function hideConfirmationModal() { document.getElementById('confirmation-modal').classList.add('hidden'); }
+
+function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+    document.getElementById(`content-${tabName}`).classList.remove('hidden');
+    document.getElementById(`tab-${tabName}`).classList.add('tab-active');
+    renderAll();
+}
+    
+function initializeClock() {
+    if (networkTimeInterval) clearInterval(networkTimeInterval);
+    const clockElem = document.querySelector('#network-clock .text-2xl');
+    networkTimeInterval = setInterval(() => {
+        if(clockElem) clockElem.textContent = new Date().toLocaleTimeString('en-US');
+        if(document.getElementById('tab-dashboard').classList.contains('tab-active')) {
+            renderUpcomingMeetings();
+        }
+    }, 1000);
+}
+    
+function formatTime(timeStr) {
+    if (!timeStr) return '';
+    const [hour, minute] = timeStr.split(':');
+    const d = new Date(0, 0, 0, hour, minute);
+    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+
+function showNotification(message, type = 'info') {
+    currentNotifications.unshift({ message, type, timestamp: new Date().toLocaleString() });
+    if (currentNotifications.length > 20) currentNotifications.pop();
+    renderCurrentNotifications();
+    
+    const toastContainer = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    const typeMap = {
+        'success': { icon: '✓', color: 'border-green-400' },
+        'error': { icon: '!', color: 'border-red-400' },
+        'warning': { icon: '⚠', color: 'border-yellow-400' },
+        'info': { icon: 'ℹ', color: 'border-blue-400' }
+    };
+    toast.className = `toast-notification card p-4 border-l-4 flex items-start space-x-3 ${typeMap[type].color}`;
+    toast.innerHTML = `<span class="text-xl font-bold mt-1">${typeMap[type].icon}</span><div><p class="font-semibold text-gray-800">${message}</p></div>`;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+}
+
+function renderCurrentNotifications() {
+    const container = document.getElementById('notifications-current');
+    if (!container) return;
+    if (currentNotifications.length === 0) {
+        container.innerHTML = '<p class="text-gray-500">No recent activity.</p>';
+        return;
+    }
+    container.innerHTML = currentNotifications.map(n => `<div class="text-sm border-b border-gray-200 pb-2"><p class="font-medium text-gray-700">${n.message}</p><p class="text-xs text-gray-400">${n.timestamp}</p></div>`).join('');
+}
+    
+// --- USER PROFILE & SETTINGS ---
+function renderUserProfile() {
+    const container = document.getElementById('user-profile-container');
+    if (!container || !userProfile) return;
+    const { name, email, picUrl } = userProfile;
+    const avatar = picUrl ? `<img src="${picUrl}" class="w-24 h-24 rounded-full object-cover">` : `<div class="w-24 h-24 rounded-full bg-gradient-to-br from-primary-color to-accent-color flex items-center justify-center text-4xl text-white">${name.charAt(0)}</div>`;
+    container.innerHTML = `<div class="flex items-center space-x-6 mb-6">${avatar}<div><h4 class="text-2xl font-bold">${name}</h4><p class="text-gray-500">${email}</p></div></div><form onsubmit="saveUserProfile(event)"><div class="space-y-4"><label class="block text-sm">Profile Picture URL</label><input type="url" id="user-profile-pic" class="form-input" value="${picUrl || ''}"><label class="block text-sm mt-4">Full Name</label><input type="text" id="user-profile-name" class="form-input" value="${name || ''}"></div><div class="flex space-x-4 mt-6"><button type="submit" class="btn btn-primary flex-1">Save Profile</button></div></form>`;
+}
+
+async function saveUserProfile(event) {
+    event.preventDefault();
+    if (!userId || !userProfile) return showNotification('User not logged in.', 'error');
+    const profileData = { 
+        ...userProfile, // Keep existing data like role
+        name: document.getElementById('user-profile-name').value, 
+        picUrl: document.getElementById('user-profile-pic').value 
+    };
+    try {
+        await setDoc(doc(db, 'users', userId), profileData);
+        showNotification('User profile saved!', 'success');
+    } catch (e) { showNotification('Failed to save profile.', 'error'); }
+}
+
+function deleteUserProfile() {
+     showNotification('Profile deletion is disabled for safety.', 'warning');
+}
+
+function executeSystemAction(action) {
+    const actionsMap = {
+        'remove-all-employees': { collections: ['employees'], data: [employees], msg: 'All employees removed.' },
+        'remove-all-rooms': { collections: ['meetingRooms'], data: [meetingRooms], msg: 'All rooms removed.' },
+        'remove-all-projects': { collections: ['projects'], data: [projects], msg: 'All projects removed.' },
+        'remove-all-bookings': { collections: ['bookings'], data: [bookings], msg: 'All bookings removed.' },
+        'remove-all-devices': { collections: ['devices'], data: [devices], msg: 'All devices removed.' },
+        'reset-all-data': { collections: ['employees', 'meetingRooms', 'projects', 'bookings', 'devices'], data: [employees, meetingRooms, projects, bookings, devices], msg: 'All user data has been reset.' }
+    };
+    const config = actionsMap[action];
+    if (!config) return;
+    showConfirmationModal(`This will remove all ${config.collections.join(', ')}. Are you sure?`, async () => {
+        if (!userId) return;
+        const batch = writeBatch(db);
+        config.collections.forEach((colName, index) => {
+            config.data[index].forEach(item => batch.delete(doc(db, 'users', userId, colName, item.id)));
+        });
+        await batch.commit();
+        showNotification(config.msg, 'warning');
+    });
+}
+
+// --- DEVICE MANAGEMENT FUNCTIONS (These remain mostly the same) ---
+
+function getDeviceIcon(type) {
+    const icons = {
+        'lights': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7c0-2.2-1.8-4-4-4S10 4.8 10 7c0 2 .3 3.2 1.5 4.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>`,
+        'climate': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v6.5a3.5 3.5 0 0 0 7 0V7a5 5 0 0 0-5-5z"/><path d="M12 2v20"/></svg>`,
+        'printer': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>`,
+        'projector': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1"></path><polygon points="12 12 15 22 9 22 12 12"></polygon><circle cx="12" cy="7" r="2"></circle></svg>`,
+        'coffeemaker': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 21h4v-2a2 2 0 0 0-2-2h0a2 2 0 0 0-2 2v2Z"></path><path d="M3 14h18v-2a4 4 0 0 0-4-4h-2a2 2 0 0 1-2-2V2H9v4a2 2 0 0 1-2 2H5a4 4 0 0 0-4 4v2Z"></path><path d="M17 14v-2"></path><path d="M7 14v-2"></path></svg>`,
+        'blinds': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v2H3zm0 4h18v2H3zm0 4h18v2H3zm0 4h18v2H3zm0 4h18v2H3z"/></svg>`,
+        'camera': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>`,
+        'lock': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`,
+    };
+    return icons[type] || '';
+}
+
+function getLocationName(locationId) {
+    return meetingRooms.find(r => r.id === locationId)?.name || 'Unassigned';
+}
+
+function getDeviceSecondaryValue(device) {
+    if (!device.status) return '';
+    switch (device.type) {
+        case 'climate':
+            return `<div class="text-2xl font-semibold">${device.temperature || 21}°C</div>`;
+        case 'printer':
+            return `<div class="text-right"><div class="text-lg font-semibold">${device.inkLevel || 100}%</div><div class="text-xs -mt-1 opacity-80">Ink</div></div>`;
+        case 'projector':
+             return `<div class="text-right"><div class="text-lg font-semibold">${device.input || 'HDMI1'}</div><div class="text-xs -mt-1 opacity-80">Input</div></div>`;
+        case 'coffeemaker':
+             return `<div class="text-right"><div class="text-lg font-semibold">${device.waterLevel || 100}%</div><div class="text-xs -mt-1 opacity-80">Water</div></div>`;
+        case 'blinds':
+             return `<div class="text-right"><div class="text-lg font-semibold">${device.position || 0}%</div><div class="text-xs -mt-1 opacity-80">Open</div></div>`;
+        case 'lock':
+             return `<div class="text-right"><div class="text-lg font-semibold">${device.isLocked ? 'Locked' : 'Open'}</div><div class="text-xs -mt-1 opacity-80">Status</div></div>`;
+        default:
+            return '';
+    }
+}
+
+function renderAllDevices() {
+    const grid = document.getElementById('all-devices-grid');
+    const filter = document.getElementById('device-filter').value;
+    const devicesToRender = devices.filter(d => filter === 'all' || d.type === filter);
+
+    if (devicesToRender.length === 0) {
+        grid.innerHTML = `<p class="text-gray-500 col-span-full text-center py-10">No devices found for this category.</p>`;
+        return;
+    }
+    grid.innerHTML = devicesToRender.map(device => {
+        const isOn = device.status;
+        const cardClass = isOn ? 'card device-card on' : 'card device-card';
+        return `
+            <div class="${cardClass} p-6 flex flex-col justify-between" onclick="openDeviceControl('${device.id}')">
+                <div class="flex-grow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="device-icon">${getDeviceIcon(device.type)}</div>
+                        ${getDeviceSecondaryValue(device)}
+                    </div>
+                    <div class="text-sm text-gray-500">${getLocationName(device.location)}</div>
+                    <h3 class="text-xl font-semibold mt-1">${device.name}</h3>
+                </div>
+                <div class="mt-6 edit-controls hidden" onclick="event.stopPropagation();">
+                    <label class="toggle-switch">
+                        <input type="checkbox" ${isOn ? 'checked' : ''} onchange="toggleDevice('${device.id}')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>`;
+    }).join('');
+    applyRolePermissions();
+}
+
+function showAddDeviceModal() {
+    const locationSelect = document.getElementById('device-location');
+    locationSelect.innerHTML = meetingRooms.length > 0
+        ? meetingRooms.map(r => `<option value="${r.id}">${r.name}</option>`).join('')
+        : '<option value="" disabled>Please add a meeting room first</option>';
+    document.getElementById('add-device-modal').classList.remove('hidden');
+    document.getElementById('add-device-modal').classList.add('flex');
+}
+function hideAddDeviceModal() { document.getElementById('add-device-modal').classList.add('hidden'); }
+
+async function addOrUpdateDevice(event) {
+    event.preventDefault();
+    if (!userId) return;
+    const deviceId = document.getElementById('device-id').value;
+    const type = document.getElementById('device-type').value;
+    const deviceData = {
+        name: document.getElementById('device-name').value.trim(),
+        type: type,
+        location: document.getElementById('device-location').value,
+        status: false
+    };
+
+    switch (type) {
+        case 'lights': deviceData.brightness = 100; break;
+        case 'climate': deviceData.temperature = 21; deviceData.mode = 'auto'; break;
+        case 'printer': deviceData.inkLevel = 100; deviceData.printerStatus = 'Idle'; break;
+        case 'projector': deviceData.input = 'HDMI1'; deviceData.zoom = 50; break;
+        case 'coffeemaker': deviceData.waterLevel = 100; deviceData.brewType = 'Espresso'; break;
+        case 'blinds': deviceData.position = 50; break;
+        case 'camera': deviceData.streamStatus = 'Offline'; break;
+        case 'lock': deviceData.isLocked = true; deviceData.status = true; break; // Locks are always 'on'
+    }
+
+    try {
+        const id = deviceId || doc(collection(db, 'users', userId, 'devices')).id;
+        await setDoc(doc(db, 'users', userId, 'devices', id), deviceData, { merge: true });
+        showNotification(`Device ${deviceId ? 'updated' : 'added'}!`, 'success');
+        hideAddDeviceModal();
+    } catch (e) {
+        showNotification('Failed to save device.', 'error');
+    }
+}
+
+async function toggleDevice(deviceId) {
+    if (!userId) return;
+    const device = devices.find(d => d.id === deviceId);
+    if (!device || device.type === 'lock') return;
+    try {
+        await updateDoc(doc(db, 'users', userId, 'devices', deviceId), { status: !device.status });
+        showNotification(`${device.name} turned ${!device.status ? 'on' : 'off'}.`, 'info');
+        if (currentDeviceId === deviceId) openDeviceControl(deviceId);
+    } catch (e) { showNotification('Failed to toggle device.', 'error'); }
+}
+
+async function updateDeviceProperty(deviceId, property, value) {
+    if (!userId) return;
+    const device = devices.find(d => d.id === deviceId);
+    if (!device) return;
+    try {
+        await updateDoc(doc(db, 'users', userId, 'devices', deviceId), { [property]: value });
+        showNotification(`${device.name} ${property} updated.`, 'info');
+        if (currentDeviceId === deviceId) openDeviceControl(deviceId);
+    } catch (e) { showNotification('Failed to update device.', 'error'); }
+}
+
+function openDeviceControl(deviceId) {
+    currentDeviceId = deviceId;
+    const device = devices.find(d => d.id === deviceId);
+    if (!device) return;
+
+    document.getElementById('device-control-title').textContent = device.name;
+    document.getElementById('device-control-location').textContent = getLocationName(device.location);
+    document.getElementById('device-remove-btn').onclick = () => confirmRemove('devices', device.id, device.name);
+
+    const container = document.getElementById('device-controls-container');
+    let controlsHTML = '';
+    const powerButtonSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>`;
+
+    // Only show controls if user has permission
+    const canControl = userRole === 'admin' || userRole === 'manager';
+    const disabledControls = canControl ? '' : 'pointer-events-none opacity-50';
+
+    switch (device.type) {
+        case 'climate':
+            controlsHTML = `
+                <div class="dial-container ${disabledControls}" id="dial-container-${device.id}">
+                    <div class="dial-background"></div>
+                    <div class="dial-progress" id="dial-progress-${device.id}"></div>
+                    <div class="dial-center">
+                        <div class="dial-value">${Math.round(device.temperature || 21)}<sup>°C</sup></div>
+                        <div class="dial-label">Temperature</div>
+                    </div>
+                </div>
+                <div class="power-button ${!device.status ? 'off' : ''} ${disabledControls}" onclick="toggleDevice('${device.id}')">${powerButtonSVG}</div>
+            `;
+            break;
+         case 'blinds':
+            controlsHTML = `
+                <div class="dial-container ${disabledControls}" id="dial-container-${device.id}">
+                    <div class="dial-background"></div>
+                    <div class="dial-progress" id="dial-progress-${device.id}"></div>
+                    <div class="dial-center">
+                        <div class="dial-value">${Math.round(device.position || 0)}<sup>%</sup></div>
+                        <div class="dial-label">Position</div>
+                    </div>
+                </div>
+                <div class="power-button ${!device.status ? 'off' : ''} ${disabledControls}" onclick="toggleDevice('${device.id}')">${powerButtonSVG}</div>
+            `;
+            break;
+        case 'lock':
+            const isLocked = device.isLocked;
+            controlsHTML = `
+                <div class="text-center my-8">
+                    <div class="text-6xl mb-4">${isLocked ? '🔒' : '🔓'}</div>
+                    <p class="text-2xl font-bold">${isLocked ? 'Locked' : 'Unlocked'}</p>
+                </div>
+                <button class="btn ${isLocked ? 'btn-primary' : 'btn-danger'} w-full text-lg ${disabledControls}" onclick="updateDeviceProperty('${device.id}', 'isLocked', ${!isLocked})">
+                    ${isLocked ? 'Unlock' : 'Lock'}
+                </button>
+            `;
+            break;
+        // ... (other cases would also get the disabledControls class)
+        default:
+            controlsHTML = `<div class="text-center my-16 text-2xl text-gray-400">No specific controls.</div>
+            <div class="power-button ${!device.status ? 'off' : ''} ${disabledControls}" onclick="toggleDevice('${device.id}')">${powerButtonSVG}</div>`;
+    }
+    
+    container.innerHTML = controlsHTML;
+    
+    if (canControl) {
+        if (device.type === 'climate') {
+            updateDial(device.id, 'temperature', device.temperature || 21);
+            setupDialInteraction(device.id, 'temperature', 16, 30);
+        } else if (device.type === 'blinds') {
+            updateDial(device.id, 'position', device.position || 0);
+            setupDialInteraction(device.id, 'position', 0, 100);
+        }
+    }
+    
+    document.getElementById('device-control-modal').classList.remove('hidden');
+    document.getElementById('device-control-modal').classList.add('flex');
+    applyRolePermissions();
+}
+
+function hideDeviceControlModal() {
+    document.getElementById('device-control-modal').classList.add('hidden');
+    currentDeviceId = null;
+}
+
+function createModeButton(device, property, value, icon, label) {
+    const isActive = device[property] == value;
+    const iconContent = icon.startsWith('<svg') ? icon : `<span class="text-2xl font-bold">${icon}</span>`;
+    return `<button class="mode-button ${isActive ? 'active' : ''}" onclick="updateDeviceProperty('${device.id}', '${property}', '${value}')">${iconContent}<span class="text-xs mt-1">${label}</span></button>`;
+}
+
+function setupDialInteraction(deviceId, property, min, max) {
+    // This function remains the same
+    const dial = document.getElementById(`dial-container-${deviceId}`);
+    if (!dial) return;
+    let isDragging = false;
+    const updateValueFromEvent = (e) => {
+        const rect = dial.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        let angleRad = Math.atan2(clientY - centerY, clientX - centerX);
+        let angleDeg = (angleRad * 180 / Math.PI + 225) % 360;
+        if (angleDeg > 270) return;
+        const percentage = angleDeg / 270;
+        const newValue = min + percentage * (max - min);
+        updateDial(deviceId, property, newValue);
+        return newValue;
+    };
+    const onDragEnd = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        dial.style.cursor = 'pointer';
+        const finalValue = Math.round(min + ( ( (Math.atan2((e.changedTouches ? e.changedTouches[0].clientY : e.clientY) - (dial.getBoundingClientRect().top + dial.getBoundingClientRect().height / 2), (e.changedTouches ? e.changedTouches[0].clientX : e.clientX) - (dial.getBoundingClientRect().left + dial.getBoundingClientRect().width / 2)) * 180 / Math.PI + 225) % 360) / 270 * (max - min) ));
+        updateDeviceProperty(deviceId, property, finalValue);
+    };
+    dial.onmousedown = (e) => { isDragging = true; dial.style.cursor = 'grabbing'; updateValueFromEvent(e); };
+    document.onmousemove = (e) => { if (isDragging) updateValueFromEvent(e); };
+    document.onmouseup = onDragEnd;
+}
+
+function updateDial(deviceId, property, value) {
+    // This function remains the same
+    const dialProgress = document.getElementById(`dial-progress-${deviceId}`);
+    const dialValueEl = document.querySelector(`#dial-container-${deviceId} .dial-value`);
+    let min, max, unit, startColor, endColor;
+    
+    if (property === 'temperature') { min = 16; max = 30; unit = '°C'; startColor = '#48cae4'; endColor = '#f87171'; }
+    else if (property === 'position') { min = 0; max = 100; unit = '%'; startColor = '#fca311'; endColor = '#adb5bd'; }
+    else return;
+    
+    const percentage = Math.max(0, Math.min(1, (value - min) / (max - min)));
+    const angle = percentage * 270;
+    const dialBGColor = document.documentElement.classList.contains('dark') ? '#1e1e1e' : '#e9ecef';
+    
+    if (dialProgress) dialProgress.style.background = `conic-gradient(from -135deg, ${startColor} 0deg, ${endColor} ${angle}deg, ${dialBGColor} ${angle}deg, ${dialBGColor} 270deg)`;
+    if (dialValueEl) dialValueEl.innerHTML = `${Math.round(value)}<sup>${unit}</sup>`;
+}
+
+ </script>
+ </body>
+</html>
