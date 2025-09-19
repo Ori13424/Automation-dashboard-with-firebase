@@ -358,6 +358,17 @@
                         <div class="w-16 h-16 bg-blue-100 rounded-full text-blue-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v6.5a3.5 3.5 0 0 0 7 0V7a5 5 0 0 0-5-5z"></path><path d="M12 2v20"></path></svg></div>
                     </div>
                 </div>
+               <div class="card p-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <div class="text-3xl font-bold text-red-500" id="energy-live-temperature">--°C</div>
+            <div class="text-sm text-gray-500 mt-1" data-i18n="energy_live_temp">Live Temperature</div>
+        </div>
+        <div class="w-16 h-16 bg-red-100 rounded-full text-red-500 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path></svg>
+        </div>
+    </div>
+</div>
                 <div class="card p-6">
                     <div class="flex items-center justify-between">
                         <div>
@@ -772,7 +783,7 @@
         `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>`
     ];
 
-    let networkTimeInterval, scheduleInterval;
+    let networkTimeInterval, scheduleInterval, energyLoggingInterval, realtimeChartUpdateInterval;
 
  
 document.addEventListener('DOMContentLoaded', () => {
@@ -1043,8 +1054,9 @@ async function fetchAllDeviceStatus() {
 
     let totalPower = 0;
     let activeDevicesCount = 0;
-    let liveVoltage = 0; // --- NEW: Variable for voltage
-    let totalCurrent = 0;  // --- NEW: Variable for current
+    let liveVoltage = 0;
+    let totalCurrent = 0;
+    let liveTemperature = null; // <-- 1. VARIABLE ADDED
 
     // Create an array of fetch promises for all devices
     const statusPromises = devices.map(async (device) => {
@@ -1060,19 +1072,19 @@ async function fetchAllDeviceStatus() {
 
             const data = await response.json();
 
-            // --- NEW: Capture voltage and add to total current ---
-            // (We assume voltage is the same across all devices on the same circuit)
+            // <-- 2. LOGIC TO CAPTURE TEMPERATURE ADDED
+            if (liveTemperature === null && data.temperature) {
+                liveTemperature = data.temperature;
+            }
+
+            // (The existing logic for voltage, current, and power remains)
             if (liveVoltage === 0) {
                 liveVoltage = data.voltage; 
             }
             totalCurrent += data.current;
-
-            // Calculate power for this device and add to total
             const devicePower = data.voltage * data.current;
             totalPower += devicePower;
-
-            // Update device status in our local state if it's on
-            if (devicePower > 0.1) { // A small threshold to consider it "on"
+            if (devicePower > 0.1) {
                activeDevicesCount++;
             }
 
@@ -1084,12 +1096,14 @@ async function fetchAllDeviceStatus() {
     // Wait for all fetches to complete
     await Promise.all(statusPromises);
 
-    // Now, update all UI elements with the aggregated data
+    // <-- 3. UI UPDATE LOGIC CONSOLIDATED AND ADDED
+    // Now, update all live UI elements with the aggregated data
     const powerUsageElement = document.getElementById('power-usage');
     const energyLivePowerElement = document.getElementById('energy-live-power');
     const activeDevicesElement = document.getElementById('active-devices');
-    const voltageElement = document.getElementById('energy-live-voltage'); // --- NEW ---
-    const currentElement = document.getElementById('energy-live-current'); // --- NEW ---
+    const voltageElement = document.getElementById('energy-live-voltage');
+    const currentElement = document.getElementById('energy-live-current');
+    const temperatureElement = document.getElementById('energy-live-temperature'); // New element
 
     if (powerUsageElement) {
         powerUsageElement.textContent = `${totalPower.toFixed(0)}W`;
@@ -1100,12 +1114,14 @@ async function fetchAllDeviceStatus() {
     if (activeDevicesElement) {
         activeDevicesElement.textContent = activeDevicesCount;
     }
-    // --- NEW: Update the voltage and current displays ---
     if (voltageElement) {
         voltageElement.textContent = `${liveVoltage.toFixed(1)} V`;
     }
     if (currentElement) {
         currentElement.textContent = `${totalCurrent.toFixed(2)} A`;
+    }
+    if (temperatureElement) {
+        temperatureElement.textContent = liveTemperature !== null ? `${liveTemperature.toFixed(1)}°C` : '--°C';
     }
 }
     async function toggleDevice(deviceId, context = false) {
@@ -1295,7 +1311,53 @@ function showAddDeviceModal() {
     function hideEditRoomModal() { document.getElementById('edit-room-modal').classList.add('hidden'); document.getElementById('edit-room-modal').classList.remove('flex'); }
     function showCreateGroupModal() { const groupDeviceList = document.getElementById('group-device-list'); groupDeviceList.innerHTML = devices.length === 0 ? `<p class="text-gray-500">No devices available.</p>` : devices.map(device => `<label class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" name="group-device" value="${device.id}" class="form-checkbox h-4 w-4 text-primary-color rounded focus:ring-primary-color"><span class="text-gray-700">${device.name}</span></label>`).join(''); document.getElementById('create-group-modal').classList.remove('hidden'); document.getElementById('create-group-modal').classList.add('flex'); }
     function hideCreateGroupModal() { document.getElementById('create-group-modal').classList.add('hidden'); document.getElementById('create-group-modal').classList.remove('flex'); document.getElementById('create-group-modal').querySelector('form').reset(); }
-    function showScheduleDeviceModal(deviceId) { const device = devices.find(d => d.id === deviceId); if (!device) return; document.getElementById('schedule-device-id').value = deviceId; const actionSelect = document.getElementById('schedule-action'); let options = `<option value="on">Turn On</option><option value="off">Turn Off</option>`; switch (device.type) { case 'lights': options += `<option value="brightness">Set Brightness</option><option value="color">Set Color</option>`; break; case 'climate': options += `<option value="temperature">Set Temperature</option>`; break; case 'security': options += `<option value="armed">Set Armed Status</option>`; break; case 'appliances': options += `<option value="mode">Set Mode</option>`; break; case 'fan': options += `<option value="speed">Set Speed</option>`; break; case 'cleaner': options += `<option value="mode">Set Mode</option>`; break; } actionSelect.innerHTML = options; actionSelect.onchange = updateScheduleValueInput; updateScheduleValueInput(); document.getElementById('schedule-device-modal').classList.remove('hidden'); document.getElementById('schedule-device-modal').classList.add('flex'); }
+  function showScheduleDeviceModal(deviceId) {
+    const device = devices.find(d => d.id === deviceId);
+    if (!device) return;
+    document.getElementById('schedule-device-id').value = deviceId;
+    const actionSelect = document.getElementById('schedule-action');
+    let options = `<option value="on">Turn On</option><option value="off">Turn Off</option>`;
+    switch (device.type) {
+        case 'lights':
+            options += `<option value="brightness">Set Brightness</option><option value="color">Set Color</option>`;
+            break;
+        case 'climate':
+            options += `<option value="temperature">Set Temperature</option>`;
+            break;
+        case 'security':
+            options += `<option value="armed">Set Armed Status</option>`;
+            break;
+        case 'appliances':
+            options += `<option value="mode">Set Mode</option>`;
+            break;
+        case 'fan':
+            options += `<option value="speed">Set Speed</option>`;
+            break;
+        case 'cleaner':
+            options += `<option value="mode">Set Mode</option>`;
+            break;
+    }
+    actionSelect.innerHTML = options;
+    actionSelect.onchange = updateScheduleValueInput;
+    updateScheduleValueInput();
+
+    // --- FIX STARTS HERE ---
+    // This part was missing. It generates the day selection UI.
+    const daysContainer = document.getElementById('schedule-days-container');
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    daysContainer.innerHTML = days.map(day => `
+        <label class="cursor-pointer">
+            <input type="checkbox" name="schedule-day" value="${day}" class="sr-only peer">
+            <div class="p-2 border rounded-lg peer-checked:bg-primary-color peer-checked:text-white peer-checked:border-primary-color transition-colors text-sm">
+                ${day}
+            </div>
+        </label>
+    `).join('');
+    // --- FIX ENDS HERE ---
+
+    document.getElementById('schedule-device-modal').classList.remove('hidden');
+    document.getElementById('schedule-device-modal').classList.add('flex');
+}
     function hideScheduleDeviceModal() { document.getElementById('schedule-device-modal').classList.add('hidden'); document.getElementById('schedule-device-modal').classList.remove('flex'); document.getElementById('schedule-value-container').innerHTML = ''; document.getElementById('schedule-device-modal').querySelector('form').reset(); }
     function showSceneModal(sceneId = null) { const modal = document.getElementById('scene-modal'); const form = modal.querySelector('form'); form.reset(); document.getElementById('scene-id').value = ''; currentSceneActions = []; const iconContainer = document.getElementById('scene-icons'); iconContainer.innerHTML = sceneIcons.map((icon) => `<button type="button" onclick="selectSceneIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg hover:bg-gray-200 text-2xl border-2 border-transparent flex justify-center items-center">${icon}</button>`).join(''); const deviceSelect = document.getElementById('action-device-select'); deviceSelect.innerHTML = `<option value="">Select Device</option>` + devices.map(d => `<option value="${d.id}">${d.name}</option>`).join(''); if (sceneId) { const scene = scenes.find(s => s.id === sceneId); if (!scene) return; document.getElementById('scene-modal-title').textContent = 'Edit Scene'; document.getElementById('scene-id').value = scene.id; document.getElementById('scene-name').value = scene.name; document.getElementById('selected-scene-icon').value = scene.icon; currentSceneActions = [...scene.actions]; const allIcons = iconContainer.querySelectorAll('button'); allIcons.forEach(btn => { if (btn.innerHTML === scene.icon) { btn.classList.add('border-primary-color'); } }); } else { document.getElementById('scene-modal-title').textContent = 'Create New Scene'; iconContainer.querySelector('button')?.classList.add('border-primary-color'); document.getElementById('selected-scene-icon').value = iconContainer.querySelector('button')?.innerHTML || ''; } renderSceneActionsList(); updateActionCommandSelect(); modal.classList.remove('hidden'); modal.classList.add('flex'); }
     function hideSceneModal() { document.getElementById('scene-modal').classList.add('hidden'); document.getElementById('scene-modal').classList.remove('flex'); }
