@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Home Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    
     <style>
         :root {
             --primary-color: #0096c7;
@@ -25,12 +22,9 @@
             --shadow-hover: 0 12px 30px rgba(149, 157, 165, 0.15);
             --success: #4ade80;
             --danger: #f87171;
-            /* --- MODIFIED: THEME-AWARE PULSE EFFECT COLORS --- */
             --pulse-shadow-start: rgba(0, 119, 182, 0.4);
             --pulse-shadow-end: rgba(0, 119, 182, 0.6);
         }
-
-        /* --- NEW: BLACK THEME STYLES --- */
         html.dark {
             --text-dark: #f8f9fa;
             --text-light: #adb5bd;
@@ -39,68 +33,24 @@
             --border-color: #343a40;
             --shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
             --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.3);
-            /* --- MODIFIED: THEME-AWARE PULSE EFFECT COLORS (DARK) --- */
-            --pulse-shadow-start: rgba(72, 202, 228, 0.35); /* Using accent color for a brighter glow */
+            --pulse-shadow-start: rgba(72, 202, 228, 0.35);
             --pulse-shadow-end: rgba(72, 202, 228, 0.5);
         }
-
-        body {
-            background-color: var(--bg-main);
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-            color: var(--text-dark);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
-        .dynamic-title {
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            transition: transform 0.3s ease;
-            
-        }
-        .dynamic-title:hover {
-            transform: scale(1.03);
-        }
-
-        .card {
-            background-color: var(--bg-card);
-            border-radius: 1rem;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-        }
-        
-        /* --- NEW: Schedule Card hover effect --- */
-        .schedule-card:hover {
-            border-left-color: var(--primary-color);
-            border-left-width: 4px;
-        }
-
-        /* Animations */
+        body { background-color: var(--bg-main); font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--text-dark); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        .dynamic-title { background: linear-gradient(45deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: transform 0.3s ease; }
+        .dynamic-title:hover { transform: scale(1.03); }
+        .card { background-color: var(--bg-card); border-radius: 1rem; border: 1px solid var(--border-color); box-shadow: var(--shadow); transition: all 0.3s ease; }
+        .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+        .schedule-card:hover { border-left-color: var(--primary-color); border-left-width: 4px; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-        
-        /* --- MODIFIED: Pulse animation for schedule button --- */
-        @keyframes pulse {
-            0% { box-shadow: 0 4px 12px var(--pulse-shadow-start); }
-            50% { box-shadow: 0 6px 20px var(--pulse-shadow-end); }
-            100% { box-shadow: 0 4px 12px var(--pulse-shadow-start); }
-        }
-
+        @keyframes pulse { 0% { box-shadow: 0 4px 12px var(--pulse-shadow-start); } 50% { box-shadow: 0 6px 20px var(--pulse-shadow-end); } 100% { box-shadow: 0 4px 12px var(--pulse-shadow-start); } }
         .fade-in { animation: fadeIn 0.5s ease-out forwards; }
         .slide-in-up { animation: slideInUp 0.5s ease-out forwards; }
-
         .notification-slide { animation: slideInRight 0.4s ease-out; }
         .toast-notification { animation: slideInRight 0.5s ease, fadeOut 0.5s ease 4.5s forwards; }
-
-        /* Buttons */
         .btn { padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s ease; text-align: center; }
         .btn-primary { background-color: var(--primary-color); color: white; box-shadow: 0 4px 12px rgba(0, 119, 182, 0.4); }
         .btn-primary:hover { background-color: var(--primary-hover); }
@@ -112,275 +62,75 @@
         .btn-secondary:hover { background-color: #dee2e6; }
         html.dark .btn-secondary { background-color: #343a40; color: var(--text-dark); }
         html.dark .btn-secondary:hover { background-color: #495057; }
-        
-        /* --- NEW: General button hover and active effects --- */
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-        .btn:active {
-            transform: translateY(0px) scale(0.98);
-            box-shadow: none;
-            transition-duration: 0.1s;
-        }
-
-        /* --- NEW: Schedule button animation class --- */
-        .btn-add-schedule {
-            animation: pulse 2.5s ease-in-out infinite;
-        }
-        
+        .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+        .btn:active { transform: translateY(0px) scale(0.98); box-shadow: none; transition-duration: 0.1s; }
+        .btn-add-schedule { animation: pulse 2.5s ease-in-out infinite; }
         .tab-container { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; }
         .tab { padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 500; color: var(--text-light); transition: all 0.3s ease; cursor: pointer; }
         .tab:hover { background-color: #f1f3f5; color: var(--text-dark); }
         html.dark .tab:hover { background-color: #2c2c2e; color: var(--text-dark); }
         .tab-active { background-color: var(--primary-color); color: white !important; box-shadow: 0 4px 12px rgba(0, 119, 182, 0.4); }
-        
         .form-input, .form-select { width: 100%; background-color: #f1f3f5; border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.75rem 1rem; color: var(--text-dark); transition: border-color 0.2s ease, box-shadow 0.2s ease; }
         html.dark .form-input, html.dark .form-select { background-color: #2c2c2e; border-color: #495057; color: var(--text-dark); }
         .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.3); }
-
         .modal-backdrop { background-color: rgba(0, 0, 0, 0.2); backdrop-filter: blur(5px); }
         html.dark .modal-backdrop { background-color: rgba(0, 0, 0, 0.5); }
         .modal-content { background-color: var(--bg-card); border-radius: 1rem; box-shadow: var(--shadow-hover); animation: slideInUp 0.4s ease-out; }
-
-        /* --- NEW STYLES FOR DEVICE CARDS --- */
-        .device-card {
-            background-color: var(--bg-card);
-            border-radius: 1.5rem;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            cursor: pointer;
-            color: var(--text-dark);
-        }
-        .device-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-hover);
-        }
-        .device-card.on {
-            background: linear-gradient(135deg, #48cae4, #0096c7);
-            color: white;
-            border-color: transparent;
-        }
-        .device-card.on .text-gray-500 {
-            color: rgba(255, 255, 255, 0.8);
-        }
-        html.dark .device-card.on .text-gray-500 {
-             color: rgba(255, 255, 255, 0.8);
-        }
-        .device-card.on .device-icon svg {
-            stroke: white;
-        }
-        .device-card .toggle-slider {
-            background-color: #ccc;
-        }
-        html.dark .device-card .toggle-slider {
-            background-color: #495057;
-        }
-        .device-card.on .toggle-slider {
-            background-color: rgba(255, 255, 255, 0.4);
-        }
-        .device-card .toggle-switch input:checked + .toggle-slider {
-            background-color: var(--primary-color);
-        }
-        .device-card.on .toggle-switch input:checked + .toggle-slider {
-            background-color: #ffffff;
-        }
-        .device-card .toggle-slider:before {
-            background-color: white;
-        }
-        html.dark .device-card .toggle-slider:before {
-             background-color: #1e1e1e;
-        }
-        .device-card.on .toggle-slider:before {
-            background-color: var(--primary-color);
-        }
-        .device-icon {
-            width: 3.5rem;
-            height: 3.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background-color: rgba(128, 128, 128, 0.08);
-            transition: background-color 0.4s ease;
-        }
-        html.dark .device-icon {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-        .device-card.on .device-icon {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-        .device-icon svg {
-            stroke: var(--text-dark);
-            transition: stroke 0.4s ease;
-            width: 1.75rem;
-            height: 1.75rem;
-        }
+        .device-card { background-color: var(--bg-card); border-radius: 1.5rem; border: 1px solid var(--border-color); box-shadow: var(--shadow); transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; color: var(--text-dark); }
+        .device-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+        .device-card.on { background: linear-gradient(135deg, #48cae4, #0096c7); color: white; border-color: transparent; }
+        .device-card.on .text-gray-500 { color: rgba(255, 255, 255, 0.8); }
+        html.dark .device-card.on .text-gray-500 { color: rgba(255, 255, 255, 0.8); }
+        .device-card.on .device-icon svg { stroke: white; }
+        .device-card .toggle-slider { background-color: #ccc; }
+        html.dark .device-card .toggle-slider { background-color: #495057; }
+        .device-card.on .toggle-slider { background-color: rgba(255, 255, 255, 0.4); }
+        .device-card .toggle-switch input:checked + .toggle-slider { background-color: var(--primary-color); }
+        .device-card.on .toggle-switch input:checked + .toggle-slider { background-color: #ffffff; }
+        .device-card .toggle-slider:before { background-color: white; }
+        html.dark .device-card .toggle-slider:before { background-color: #1e1e1e; }
+        .device-card.on .toggle-slider:before { background-color: var(--primary-color); }
+        .device-icon { width: 3.5rem; height: 3.5rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; background-color: rgba(128, 128, 128, 0.08); transition: background-color 0.4s ease; }
+        html.dark .device-icon { background-color: rgba(255, 255, 255, 0.05); }
+        .device-card.on .device-icon { background-color: rgba(255, 255, 255, 0.2); }
+        .device-icon svg { stroke: var(--text-dark); transition: stroke 0.4s ease; width: 1.75rem; height: 1.75rem; }
         .toggle-switch { position: relative; display: inline-block; width: 52px; height: 30px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; transition: .4s; border-radius: 34px; }
         .toggle-slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; transition: .4s; border-radius: 50%; }
         input:checked + .toggle-slider:before { transform: translateX(22px); }
-
-        /* --- STYLES FOR NEW DEVICE CONTROL MODAL --- */
-        .control-modal-content {
-            background: #f8f9fa;
-            border-radius: 1.5rem;
-            box-shadow: var(--shadow-hover);
-            animation: slideInUp 0.4s ease-out;
-            width: 100%;
-            max-width: 380px;
-            color: #343a40;
-        }
-        html.dark .control-modal-content {
-            background: #2c2c2e;
-            color: var(--text-dark);
-        }
-        .dial-container {
-            position: relative;
-            width: 250px;
-            height: 250px;
-            margin: 2rem auto;
-            cursor: pointer;
-        }
-        .dial-background {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 50%;
-            background: #e9ecef;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
-        }
-        html.dark .dial-background {
-             background: #1e1e1e;
-             box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
-        }
-        .dial-progress {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 50%;
-            clip-path: circle(50%);
-        }
-        .dial-center {
-            position: absolute;
-            top: 15%; left: 15%; width: 70%; height: 70%;
-            background: #f8f9fa;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            pointer-events: none;
-        }
-        html.dark .dial-center {
-             background: #2c2c2e;
-        }
-        .dial-value {
-            font-size: 3.5rem; font-weight: 700; line-height: 1; color: var(--text-dark);
-        }
-        .dial-value sup {
-            font-size: 1.5rem; font-weight: 600; vertical-align: top;
-        }
-        .dial-label {
-            font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem;
-        }
-
-        .mode-selector {
-            display: flex; gap: 1rem; justify-content: center; padding: 0 1rem;
-        }
-        .mode-button {
-            background: white; border: 1px solid var(--border-color); border-radius: 1rem;
-            padding: 1rem 0.5rem;
-            width: 80px; height: 80px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.3s ease;
-            font-weight: 500; color: var(--text-light);
-            text-align: center;
-        }
-        html.dark .mode-button {
-            background: #3a3a3c;
-        }
-        .mode-button:hover {
-            transform: translateY(-3px); box-shadow: var(--shadow);
-        }
-        .mode-button.active {
-            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
-            color: white; border-color: transparent;
-            box-shadow: 0 8px 20px rgba(0, 119, 182, 0.3);
-        }
-        .mode-button svg {
-            width: 24px;
-            height: 24px;
-            stroke: var(--text-dark);
-        }
-        .mode-button.active svg {
-            stroke: white;
-        }
-        .power-button-container {
-            margin-top: 2rem; display: flex; justify-content: center;
-        }
-        .power-button {
-            width: 70px; height: 70px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
-            box-shadow: 0 8px 20px rgba(0, 119, 182, 0.3);
-            color: white;
-            display: flex; align-items: center; justify-content: center;
-            border: none; cursor: pointer; transition: all 0.3s ease;
-        }
-        .power-button:hover {
-            transform: scale(1.05);
-        }
-        .power-button.off {
-            background: #e9ecef; color: var(--text-light); box-shadow: none;
-        }
-        html.dark .power-button.off {
-             background: #3a3a3c; color: var(--text-light);
-        }
-        .power-button svg {
-            width: 32px; height: 32px;
-        }
-        .status-message {
-            text-align: center;
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 8px;
-            display: none;
-        }
-        .status-message.success {
-            background-color: #d1e7dd;
-            color: #0f5132;
-        }
-        html.dark .status-message.success {
-             background-color: #0f5132; color: #d1e7dd;
-        }
-        .status-message.error {
-            background-color: #f8d7da;
-            color: #842029;
-        }
-        html.dark .status-message.error {
-             background-color: #842029; color: #f8d7da;
-        }
+        .control-modal-content { background: #f8f9fa; border-radius: 1.5rem; box-shadow: var(--shadow-hover); animation: slideInUp 0.4s ease-out; width: 100%; max-width: 380px; color: #343a40; }
+        html.dark .control-modal-content { background: #2c2c2e; color: var(--text-dark); }
+        .dial-container { position: relative; width: 250px; height: 250px; margin: 2rem auto; cursor: pointer; }
+        .dial-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: #e9ecef; box-shadow: inset 0 0 20px rgba(0,0,0,0.05); }
+        html.dark .dial-background { background: #1e1e1e; box-shadow: inset 0 0 20px rgba(0,0,0,0.2); }
+        .dial-progress { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; clip-path: circle(50%); }
+        .dial-center { position: absolute; top: 15%; left: 15%; width: 70%; height: 70%; background: #f8f9fa; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; }
+        html.dark .dial-center { background: #2c2c2e; }
+        .dial-value { font-size: 3.5rem; font-weight: 700; line-height: 1; color: var(--text-dark); }
+        .dial-value sup { font-size: 1.5rem; font-weight: 600; vertical-align: top; }
+        .dial-label { font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem; }
+        .mode-selector { display: flex; gap: 1rem; justify-content: center; padding: 0 1rem; }
+        .mode-button { background: white; border: 1px solid var(--border-color); border-radius: 1rem; padding: 1rem 0.5rem; width: 80px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; font-weight: 500; color: var(--text-light); text-align: center; }
+        html.dark .mode-button { background: #3a3a3c; }
+        .mode-button:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+        .mode-button.active { background: linear-gradient(45deg, var(--accent-color), var(--primary-color)); color: white; border-color: transparent; box-shadow: 0 8px 20px rgba(0, 119, 182, 0.3); }
+        .mode-button svg { width: 24px; height: 24px; stroke: var(--text-dark); }
+        .mode-button.active svg { stroke: white; }
+        .power-button-container { margin-top: 2rem; display: flex; justify-content: center; }
+        .power-button { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-color), var(--primary-color)); box-shadow: 0 8px 20px rgba(0, 119, 182, 0.3); color: white; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .power-button:hover { transform: scale(1.05); }
+        .power-button.off { background: #e9ecef; color: var(--text-light); box-shadow: none; }
+        html.dark .power-button.off { background: #3a3a3c; color: var(--text-light); }
+        .power-button svg { width: 32px; height: 32px; }
+        .status-message { text-align: center; margin-top: 20px; padding: 10px; border-radius: 8px; display: none; }
+        .status-message.success { background-color: #d1e7dd; color: #0f5132; }
+        html.dark .status-message.success { background-color: #0f5132; color: #d1e7dd; }
+        .status-message.error { background-color: #f8d7da; color: #842029; }
+        html.dark .status-message.error { background-color: #842029; color: #f8d7da; }
         .room-icon-btn svg { width: 2rem; height: 2rem; }
-
-        /* --- NEW: Special Schedule Button --- */
-.btn-schedule-special {
-    background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
-    color: white;
-    border: none;
-    box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
-    animation: pulse 2.5s ease-in-out infinite;
-    background-size: 150% 150%; 
-    transition: background-position 0.4s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.btn-schedule-special:hover {
-    background-position: right center; /* Creates a subtle gradient shift on hover */
-    box-shadow: var(--shadow-hover);
-    transform: translateY(-2px) scale(1.02);
-}
-
-        /* Other Dark Mode Overrides */
+        .btn-schedule-special { background: linear-gradient(45deg, var(--accent-color), var(--primary-color)); color: white; border: none; box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3); animation: pulse 2.5s ease-in-out infinite; background-size: 150% 150%; transition: background-position 0.4s ease, transform 0.2s ease, box-shadow 0.2s ease; }
+        .btn-schedule-special:hover { background-position: right center; box-shadow: var(--shadow-hover); transform: translateY(-2px) scale(1.02); }
         html.dark .bg-card\/80 { background-color: rgba(30, 30, 30, 0.8); }
         html.dark .border-b, html.dark .border-t, html.dark .border-gray-200 { border-color: var(--border-color); }
         html.dark .text-gray-800, html.dark .text-gray-700 { color: var(--text-dark); }
@@ -401,45 +151,31 @@
         html.dark .bg-gray-50 { background-color: #2c2c2e; }
         html.dark .bg-purple-500 { background-color: #8b5cf6; }
         html.dark .hover\:bg-purple-600:hover { background-color: #7c3aed; }
-
-
-        /* --- NEW: Energy Page Styles --- */
-.progress-bar-container {
-    width: 100%;
-    background-color: var(--border-color);
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 1.25rem;
-    line-height: 1.25rem;
-    background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-align: right;
-    padding-right: 0.5rem;
-    white-space: nowrap;
-    transition: width 0.5s ease-in-out;
-}
+        .progress-bar-container { width: 100%; background-color: var(--border-color); border-radius: 0.5rem; overflow: hidden; }
+        .progress-bar { height: 1.25rem; line-height: 1.25rem; background: linear-gradient(90deg, var(--accent-color), var(--primary-color)); color: white; font-size: 0.75rem; font-weight: 600; text-align: right; padding-right: 0.5rem; white-space: nowrap; transition: width 0.5s ease-in-out; }
+        /* --- NEW: Language Selector Dark Mode --- */
+        html.dark .form-select { background-color: #2c2c2e; border-color: #495057; color: var(--text-dark); }
     </style>
 </head>
 <body class="min-h-screen">
     <header class="bg-card/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40">
         <div class="max-w-screen-xl mx-auto p-4 flex justify-between items-center">
             <div>
-                <h1 class="text-3xl font-bold dynamic-title">ByteBot</h1>
-                <p class="text-gray-500 mt-1">Smart Living, Locally Crafted</p>
+                <h1 class="text-3xl font-bold dynamic-title" data-i18n="header_title">ByteBot</h1>
+                <p class="text-gray-500 mt-1" data-i18n="header_subtitle">Smart Living, Locally Crafted</p>
             </div>
             <div class="flex items-center space-x-4 md:space-x-6">
                 <button onclick="toggleTheme()" id="theme-toggle-btn" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-color" style="transition: background-color 0.2s;"></button>
+                <select id="languageToggle" class="form-select !w-auto !py-1.5 !px-2 text-sm">
+                    <option value="en">EN</option>
+                    <option value="bn">বাংলা</option>
+                </select>
                 <div id="network-clock" class="text-right">
                     <div class="text-2xl font-semibold text-gray-800">--:--:-- --</div>
-                    <div class="text-xs text-gray-500">Syncing...</div>
+                    <div class="text-xs text-gray-500" data-i18n="network_time_status">Syncing...</div>
                 </div>
                 <div class="text-right">
-                    <div class="text-sm text-gray-500">User</div>
+                    <div class="text-sm text-gray-500" data-i18n="header_user_label">User</div>
                     <div class="font-semibold text-gray-800" id="display-user-name">John Doe</div>
                 </div>
                <div id="user-avatar-container" class="w-12 h-12 bg-gradient-to-br from-primary-color to-accent-color rounded-full flex items-center justify-center text-xl text-white shadow-lg overflow-hidden">
@@ -450,424 +186,539 @@
 
     <main class="max-w-screen-xl mx-auto p-4 md:p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 fade-in">
-    <div class="card p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="text-3xl font-bold" id="total-devices">0</div>
-                <div class="text-sm text-gray-500 mt-1">Total Devices</div>
+            <div class="card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold" id="total-devices">0</div>
+                        <div class="text-sm text-gray-500 mt-1" data-i18n="stat_total_devices">Total Devices</div>
+                    </div>
+                    <div class="w-16 h-16 bg-blue-100 rounded-full text-blue-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+                </div>
             </div>
-            <div class="w-16 h-16 bg-blue-100 rounded-full text-blue-500 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
+            <div class="card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold text-green-500" id="active-devices">0</div>
+                        <div class="text-sm text-gray-500 mt-1" data-i18n="stat_active_now">Active Now</div>
+                    </div>
+                    <div class="w-16 h-16 bg-green-100 rounded-full text-green-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg></div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="card p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="text-3xl font-bold text-green-500" id="active-devices">0</div>
-                <div class="text-sm text-gray-500 mt-1">Active Now</div>
+            <div class="card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold" style="color: var(--accent-color);" id="total-rooms">0</div>
+                        <div class="text-sm text-gray-500 mt-1" data-i18n="stat_rooms">Rooms</div>
+                    </div>
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full text-indigo-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="3" x2="12" y2="21"></line><line x1="3" y1="12" x2="21" y2="12"></line></svg></div>
+                </div>
             </div>
-            <div class="w-16 h-16 bg-green-100 rounded-full text-green-500 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
-                    <line x1="12" y1="2" x2="12" y2="12"></line>
-                </svg>
-            </div>
-        </div>
-    </div>
-    <div class="card p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="text-3xl font-bold" style="color: var(--accent-color);" id="total-rooms">0</div>
-                <div class="text-sm text-gray-500 mt-1">Rooms</div>
-            </div>
-            <div class="w-16 h-16 bg-indigo-100 rounded-full text-indigo-500 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="12" y1="3" x2="12" y2="21"></line>
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                </svg>
+            <div class="card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold text-yellow-500" id="power-usage">0W</div>
+                        <div class="text-sm text-gray-500 mt-1" data-i18n="stat_power_usage">Power Usage</div>
+                    </div>
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full text-yellow-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="card p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <div class="text-3xl font-bold text-yellow-500" id="power-usage">0W</div>
-                <div class="text-sm text-gray-500 mt-1">Power Usage</div>
-            </div>
-            <div class="w-16 h-16 bg-yellow-100 rounded-full text-yellow-500 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-            </div>
-        </div>
-    </div>
-</div>
         
         <div class="flex flex-wrap space-x-2 mb-8 tab-container">
-            <button onclick="showTab('overview')" id="tab-overview" class="tab tab-active flex-grow">Overview</button>
-            <button onclick="showTab('devices')" id="tab-devices" class="tab flex-grow">All Devices</button>
-            <button onclick="showTab('rooms')" id="tab-rooms" class="tab flex-grow">Rooms</button>
-            <button onclick="showTab('automation')" id="tab-automation" class="tab flex-grow">Automation</button>
-            <button onclick="showTab('energy')" id="tab-energy" class="tab flex-grow">Energy</button>
-            <button onclick="showTab('settings')" id="tab-settings" class="tab flex-grow">Settings</button>
-            <button onclick="showTab('wifi')" id="tab-wifi" class="tab flex-grow">Configure Wi-Fi</button>
+            <button onclick="showTab('overview')" id="tab-overview" class="tab tab-active flex-grow" data-i18n="tab_overview">Overview</button>
+            <button onclick="showTab('devices')" id="tab-devices" class="tab flex-grow" data-i18n="tab_all_devices">All Devices</button>
+            <button onclick="showTab('rooms')" id="tab-rooms" class="tab flex-grow" data-i18n="tab_rooms">Rooms</button>
+            <button onclick="showTab('automation')" id="tab-automation" class="tab flex-grow" data-i18n="tab_automation">Automation</button>
+            <button onclick="showTab('energy')" id="tab-energy" class="tab flex-grow" data-i18n="tab_energy">Energy</button>
+            <button onclick="showTab('settings')" id="tab-settings" class="tab flex-grow" data-i18n="tab_settings">Settings</button>
+            <button onclick="showTab('wifi')" id="tab-wifi" class="tab flex-grow" data-i18n="tab_wifi">Configure Wi-Fi</button>
         </div>
         
         <div id="content-overview" class="tab-content fade-in">
             <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-4 text-gray-800">Common Scenes</h2>
-                <div id="overview-scenes-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                    </div>
+                <h2 class="text-2xl font-bold mb-4 text-gray-800" data-i18n="overview_scenes">Common Scenes</h2>
+                <div id="overview-scenes-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"></div>
             </div>
             <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-4 text-gray-800">Quick Access</h2>
-                <div id="quick-access-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    </div>
+                <h2 class="text-2xl font-bold mb-4 text-gray-800" data-i18n="overview_quick_access">Quick Access</h2>
+                <div id="quick-access-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
             </div>
-            <div><h2 class="text-2xl font-bold mb-4 text-gray-800">Recent Activity</h2><div class="card p-6 max-h-96 overflow-y-auto"><div id="notifications-current" class="space-y-3 mb-4"></div><div id="notifications-history-container" class="mt-4 pt-4 border-t border-gray-200"><h3 class="text-xl font-semibold mb-3 text-gray-700">Activity History</h3><select id="notification-history-select" onchange="displayHistoricalNotifications(this.value)" class="form-select"><option value="">Select a previous session</option></select><div id="notifications-history-display" class="space-y-3 mt-4"></div></div></div></div>
+            <div>
+                <h2 class="text-2xl font-bold mb-4 text-gray-800" data-i18n="overview_recent_activity">Recent Activity</h2>
+                <div class="card p-6 max-h-96 overflow-y-auto">
+                    <div id="notifications-current" class="space-y-3 mb-4"></div>
+                    <div id="notifications-history-container" class="mt-4 pt-4 border-t border-gray-200">
+                        <h3 class="text-xl font-semibold mb-3 text-gray-700" data-i18n="overview_activity_history">Activity History</h3>
+                        <select id="notification-history-select" onchange="displayHistoricalNotifications(this.value)" class="form-select">
+                            <option value="" data-i18n="overview_history_select">Select a previous session</option>
+                        </select>
+                        <div id="notifications-history-display" class="space-y-3 mt-4"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="content-devices" class="tab-content hidden fade-in"><div class="flex flex-wrap justify-between items-center mb-6 gap-4"><h2 class="text-2xl font-bold text-gray-800">All Devices</h2><div class="flex items-center space-x-4"><select id="device-filter" onchange="filterDevices()" class="form-select"><option value="all">All Categories</option><option value="lights">Lights</option><option value="climate">Climate</option><option value="security">Security</option><option value="appliances">Speakers</option><option value="switch">Smart Switches</option><option value="fan">Smart Fan</option><option value="cleaner">Smart Cleaner</option><option value="router">Routers</option></select><button onclick="showAddDeviceModal()" class="btn btn-primary whitespace-nowrap">+ Add Device</button></div></div><div id="all-devices-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div></div>
-        <div id="content-rooms" class="tab-content hidden fade-in"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold text-gray-800">Rooms</h2><button onclick="showAddRoomModal()" class="btn btn-accent">+ Add Room</button></div><div id="detailed-rooms-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div></div>
+
+        <div id="content-devices" class="tab-content hidden fade-in">
+            <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-gray-800" data-i18n="devices_title">All Devices</h2>
+                <div class="flex items-center space-x-4">
+                    <select id="device-filter" onchange="filterDevices()" class="form-select">
+                        <option value="all" data-i18n="devices_filter_all">All Categories</option>
+                        <option value="lights" data-i18n="devices_filter_lights">Lights</option>
+                        <option value="climate" data-i18n="devices_filter_climate">Climate</option>
+                        <option value="security" data-i18n="devices_filter_security">Security</option>
+                        <option value="appliances" data-i18n="devices_filter_speakers">Speakers</option>
+                        <option value="switch" data-i18n="devices_filter_switch">Smart Switches</option>
+                        <option value="fan" data-i18n="devices_filter_fan">Smart Fan</option>
+                        <option value="cleaner" data-i18n="devices_filter_cleaner">Smart Cleaner</option>
+                        <option value="router" data-i18n="devices_filter_router">Routers</option>
+                    </select>
+                    <button onclick="showAddDeviceModal()" class="btn btn-primary whitespace-nowrap" data-i18n="devices_add_btn">+ Add Device</button>
+                </div>
+            </div>
+            <div id="all-devices-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        </div>
+
+        <div id="content-rooms" class="tab-content hidden fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800" data-i18n="rooms_title">Rooms</h2>
+                <button onclick="showAddRoomModal()" class="btn btn-accent" data-i18n="rooms_add_btn">+ Add Room</button>
+            </div>
+            <div id="detailed-rooms-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+        
         <div id="content-automation" class="tab-content hidden fade-in">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Automation</h2>
+                <h2 class="text-2xl font-bold text-gray-800" data-i18n="automation_title">Automation</h2>
                 <div class="flex items-center space-x-2">
-                    <button onclick="showCreateGroupModal()" class="btn bg-purple-500 hover:bg-purple-600 text-white">+ Create Group</button>
+                    <button onclick="showCreateGroupModal()" class="btn bg-purple-500 hover:bg-purple-600 text-white" data-i18n="automation_create_group_btn">+ Create Group</button>
                 </div>
             </div>
             <div class="mb-8">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold text-gray-700 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-3 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                        <span>Common Scenes</span>
+                        <span data-i18n="automation_common_scenes">Common Scenes</span>
                     </h3>
-                    <button onclick="showSceneModal()" class="btn btn-accent">+ Add Scene</button>
+                    <button onclick="showSceneModal()" class="btn btn-accent" data-i18n="automation_add_scene_btn">+ Add Scene</button>
                 </div>
                 <div id="automation-scenes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </div>
             <div class="mb-8">
                  <h3 class="text-xl font-semibold mb-4 text-gray-700 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-3 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    <span>Active Schedules</span>
+                    <span data-i18n="automation_active_schedules">Active Schedules</span>
                 </h3>
                 <div id="active-schedules" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </div>
             <div>
                  <h3 class="text-xl font-semibold mb-4 text-gray-700 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-3 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    <span>Device Groups</span>
+                    <span data-i18n="automation_device_groups">Device Groups</span>
                 </h3>
                 <div id="device-groups" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </div>
         </div>
-      <div id="content-settings" class="tab-content hidden fade-in">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Settings</h2>
-            <div class="card p-6 mb-8">
-                <h3 class="text-xl font-semibold mb-4 text-gray-700">User Profile</h3>
-                <div id="user-profile-container">
+
+        <div id="content-energy" class="tab-content hidden fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-3xl font-bold text-yellow-500" id="energy-live-power">0W</div>
+                            <div class="text-sm text-gray-500 mt-1" data-i18n="energy_live_power">Live Power Usage</div>
+                        </div>
+                        <div class="w-16 h-16 bg-yellow-100 rounded-full text-yellow-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg></div>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-3xl font-bold" id="energy-live-voltage">0 V</div>
+                            <div class="text-sm text-gray-500 mt-1" data-i18n="energy_live_voltage">Live Voltage</div>
+                        </div>
+                        <div class="w-16 h-16 bg-blue-100 rounded-full text-blue-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-3xl font-bold" id="energy-live-current">0 A</div>
+                            <div class="text-sm text-gray-500 mt-1" data-i18n="energy_total_current">Total Current</div>
+                        </div>
+                        <div class="w-16 h-16 bg-indigo-100 rounded-full text-indigo-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path><path d="M10 15v-6l4 3l-4 3z"></path></svg></div>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-3xl font-bold" id="energy-today">0 kWh</div>
+                            <div class="text-sm text-gray-500 mt-1" id="energy-today-label" data-i18n="energy_today_consumption">Today's Consumption</div>
+                        </div>
+                        <div class="w-16 h-16 bg-blue-100 rounded-full text-blue-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v6.5a3.5 3.5 0 0 0 7 0V7a5 5 0 0 0-5-5z"></path><path d="M12 2v20"></path></svg></div>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-3xl font-bold" id="energy-this-month">0 kWh</div>
+                            <div class="text-sm text-gray-500 mt-1" id="energy-this-month-label" data-i18n="energy_month_consumption">This Month's Consumption</div>
+                        </div>
+                         <div class="w-16 h-16 bg-indigo-100 rounded-full text-indigo-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
+                    </div>
+                </div>
+                 <div class="card p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-3xl font-bold text-green-500" id="energy-estimated-bill">$0.00</div>
+                            <div class="text-sm text-gray-500 mt-1" data-i18n="energy_estimated_bill">Estimated Monthly Bill</div>
+                        </div>
+                         <div class="w-16 h-16 bg-green-100 rounded-full text-green-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+                    </div>
                 </div>
             </div>
+            <div class="card p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-gray-700" data-i18n="energy_view_history">View History</h3>
+                <div class="flex flex-col md:flex-row items-center gap-4">
+                    <div class="w-full md:w-2/3">
+                        <label for="energy-history-select" class="block text-sm font-medium mb-2 text-gray-600" data-i18n="energy_history_select_label">Select a date to view summary</label>
+                        <select id="energy-history-select" onchange="displayHistoricalEnergyData(this.value)" class="form-select"></select>
+                    </div>
+                    <div class="w-full md:w-1/3 pt-0 md:pt-7">
+                        <button onclick="renderEnergyPage()" class="btn btn-secondary w-full" data-i18n="energy_view_live_btn">View Live Data</button>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+                <div class="card p-6 lg:col-span-3">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-700" data-i18n="energy_live_chart_title">Live Power Usage (Watts)</h3>
+                    <div id="realtime-chart-container" style="height: 300px;"></div>
+                </div>
+                <div class="card p-6 lg:col-span-2">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-700" data-i18n="energy_room_consumption_title">Consumption by Room</h3>
+                    <div id="consumption-by-room" class="space-y-3"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                 <div class="card p-6 lg:col-span-3">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-700" data-i18n="energy_daily_chart_title">Daily Consumption - Last 7 Days (kWh)</h3>
+                    <div id="daily-chart-container" style="height: 300px;"></div>
+                </div>
+                 <div class="card p-6 lg:col-span-2">
+                     <h3 class="text-xl font-semibold mb-4 text-gray-700" data-i18n="energy_top_devices_title">Top Consuming Devices</h3>
+                     <div id="consumption-by-device" class="space-y-3"></div>
+                     <h3 class="text-xl font-semibold mt-6 mb-4 pt-6 border-t border-gray-200 text-gray-700" data-i18n="energy_settings_title">Settings</h3>
+                     <div>
+                        <label for="electricity-price" class="block text-sm font-medium mb-2 text-gray-600" data-i18n="energy_price_label">Price per kWh ($)</label>
+                        <div class="flex items-center space-x-2">
+                             <input type="number" id="electricity-price" step="0.01" class="form-input" placeholder="e.g., 0.15">
+                             <button onclick="updateElectricityPrice()" class="btn btn-primary" data-i18n="energy_save_btn">Save</button>
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+      
+        <div id="content-settings" class="tab-content hidden fade-in">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800" data-i18n="settings_title">Settings</h2>
+            <div class="card p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4 text-gray-700" data-i18n="settings_user_profile">User Profile</h3>
+                <div id="user-profile-container"></div>
+            </div>
             <div class="card p-6">
-                <h3 class="text-xl font-semibold mb-4 text-gray-700">System Management</h3>
+                <h3 class="text-xl font-semibold mb-4 text-gray-700" data-i18n="settings_system_management">System Management</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <button onclick="clearAllActivityData()" class="card p-6 hover:border-yellow-400 transition-all text-center flex flex-col items-center justify-center space-y-2">
                         <div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="9" y1="15" x2="15" y2="15"></line></svg></div>
-                        <div class="font-medium text-gray-700">Clear All Activity Logs</div>
+                        <div class="font-medium text-gray-700" data-i18n="settings_clear_logs_btn">Clear All Activity Logs</div>
                     </button>
                     <button onclick="executeSystemAction('remove-all-devices')" class="card p-6 hover:border-red-400 transition-all text-center flex flex-col items-center justify-center space-y-2">
                         <div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></div>
-                        <div class="font-medium text-gray-700">Remove All Devices</div>
+                        <div class="font-medium text-gray-700" data-i18n="settings_remove_devices_btn">Remove All Devices</div>
                     </button>
                     <button onclick="executeSystemAction('remove-all-rooms')" class="card p-6 hover:border-red-400 transition-all text-center flex flex-col items-center justify-center space-y-2">
                         <div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5A2.5 2.5 0 0 1 5 4h14a2.5 2.5 0 0 1 2.5 2.5v11A2.5 2.5 0 0 1 19 20H5a2.5 2.5 0 0 1-2.5-2.5v-11Z"/><path d="m14 10-4 4"/><path d="m10 10 4 4"/></svg></div>
-                        <div class="font-medium text-gray-700">Remove All Rooms</div>
+                        <div class="font-medium text-gray-700" data-i18n="settings_remove_rooms_btn">Remove All Rooms</div>
                     </button>
                     <button onclick="executeSystemAction('remove-all-schedules')" class="card p-6 hover:border-red-400 transition-all text-center flex flex-col items-center justify-center space-y-2">
                         <div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="10" y1="14" x2="14" y2="18"></line><line x1="14" y1="14" x2="10" y2="18"></line></svg></div>
-                        <div class="font-medium text-gray-700">Clear All Schedules</div>
+                        <div class="font-medium text-gray-700" data-i18n="settings_clear_schedules_btn">Clear All Schedules</div>
                     </button>
                     <button onclick="executeSystemAction('remove-all-groups')" class="card p-6 hover:border-red-400 transition-all text-center flex flex-col items-center justify-center space-y-2">
                         <div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path><line x1="2" y1="22" x2="22" y2="2"></line></svg></div>
-                        <div class="font-medium text-gray-700">Clear All Groups</div>
+                        <div class="font-medium text-gray-700" data-i18n="settings_clear_groups_btn">Clear All Groups</div>
                     </button>
                     <button onclick="window.location.href='support.html'" class="card p-6 hover:border-blue-400 transition-all text-center flex flex-col items-center justify-center space-y-2">
-                        <div class="w-12 h-12 text-gray-700 mb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                            </svg>
-                        </div>
-                        <div class="font-medium text-gray-700">Contact Support</div>
+                        <div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
+                        <div class="font-medium text-gray-700" data-i18n="settings_contact_support_btn">Contact Support</div>
                     </button>
                     <button id="sign-out-btn" class="card p-6 hover:border-red-400 transition-all text-center flex flex-col items-center justify-center space-y-2">
-                        <div class="w-12 h-12 text-gray-700 mb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                <polyline points="16 17 21 12 16 7"></polyline>
-                                <line x1="21" y1="12" x2="9" y2="12"></line>
-                            </svg>
-                        </div>
-                        <div class="font-medium text-gray-700">Sign Out</div>
+                        <div class="w-12 h-12 text-gray-700 mb-2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></div>
+                        <div class="font-medium text-gray-700" data-i18n="settings_sign_out_btn">Sign Out</div>
                     </button>
                     <button onclick="executeSystemAction('reset-all-data')" class="card p-6 hover:border-red-400 transition-all col-span-full bg-red-50 hover:bg-red-100 flex items-center justify-center gap-4">
-                        <div class="w-12 h-12 text-red-600">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                        </div>
-                        <div class="font-medium text-red-600">Reset All Data</div>
+                        <div class="w-12 h-12 text-red-600"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
+                        <div class="font-medium text-red-600" data-i18n="settings_reset_all_btn">Reset All Data</div>
                     </button>
                 </div>
             </div>
         </div>
+
         <div id="content-wifi" class="tab-content hidden fade-in">
             <div class="max-w-md mx-auto">
                 <div class="card p-8">
-                    <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">Configure Wi-Fi Network</h2>
-                  <form id="wifi-form" method="POST" action="http://192.168.4.1/save">
-                     <div class="mb-4">
-                        <label for="ssid" class="block text-sm font-medium mb-2 text-gray-600">Wi-Fi Name (SSID)</label>
-                        <input type="text" id="ssid" name="ssid" class="form-input" placeholder="Enter your Wi-Fi name" required>
-                    </div>
-                    <div class="mb-6">
-                        <label for="password" class="block text-sm font-medium mb-2 text-gray-600">Wi-Fi Password</label>
-                        <input type="password" id="password" name="password" class="form-input" placeholder="Enter your Wi-Fi password">
-                    </div>
-                    <button type="submit" class="btn btn-primary w-full">Save and Connect</button>
-                </form>
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center" data-i18n="wifi_title">Configure Wi-Fi Network</h2>
+                    <form id="wifi-form" method="POST" action="http://192.168.4.1/save">
+                        <div class="mb-4">
+                            <label for="ssid" class="block text-sm font-medium mb-2 text-gray-600" data-i18n="wifi_ssid_label">Wi-Fi Name (SSID)</label>
+                            <input type="text" id="ssid" name="ssid" class="form-input" data-i18n-placeholder="wifi_ssid_placeholder" placeholder="Enter your Wi-Fi name" required>
+                        </div>
+                        <div class="mb-6">
+                            <label for="password" class="block text-sm font-medium mb-2 text-gray-600" data-i18n="wifi_password_label">Wi-Fi Password</label>
+                            <input type="password" id="password" name="password" class="form-input" data-i18n-placeholder="wifi_password_placeholder" placeholder="Enter your Wi-Fi password">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full" data-i18n="wifi_connect_btn">Save and Connect</button>
+                    </form>
                     <div id="wifi-status-message" class="status-message"></div>
                 </div>
             </div>
         </div>
+    </main>
 
-      <div id="content-energy" class="tab-content hidden fade-in">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="card p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-3xl font-bold text-yellow-500" id="energy-live-power">0W</div>
-                    <div class="text-sm text-gray-500 mt-1">Live Power Usage</div>
-                </div>
-                <div class="w-16 h-16 bg-yellow-100 rounded-full text-yellow-500 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
-                </div>
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50">
+        <div class="modal-content p-8 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold mb-4" data-i18n="modal_confirm_title">Are you sure?</h3>
+            <p id="confirmation-message" class="text-gray-600 mb-6" data-i18n="modal_confirm_text">This action cannot be undone.</p>
+            <div class="flex space-x-4 mt-6">
+                <button id="confirm-action-btn" class="btn btn-danger flex-1" data-i18n="btn_confirm">Confirm</button>
+                <button onclick="hideConfirmationModal()" class="btn btn-secondary flex-1" data-i18n="btn_cancel">Cancel</button>
             </div>
-        </div>
-        <div class="card p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-3xl font-bold" id="energy-live-voltage">0 V</div>
-                    <div class="text-sm text-gray-500 mt-1">Live Voltage</div>
-                </div>
-                <div class="w-16 h-16 bg-blue-100 rounded-full text-blue-500 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                </div>
-            </div>
-        </div>
-        <div class="card p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-3xl font-bold" id="energy-live-current">0 A</div>
-                    <div class="text-sm text-gray-500 mt-1">Total Current</div>
-                </div>
-                <div class="w-16 h-16 bg-indigo-100 rounded-full text-indigo-500 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path><path d="M10 15v-6l4 3l-4 3z"></path></svg>
-                </div>
-            </div>
-        </div>
-        <div class="card p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-3xl font-bold" id="energy-today">0 kWh</div>
-                    <div class="text-sm text-gray-500 mt-1" id="energy-today-label">Today's Consumption</div>
-                </div>
-                <div class="w-16 h-16 bg-blue-100 rounded-full text-blue-500 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v6.5a3.5 3.5 0 0 0 7 0V7a5 5 0 0 0-5-5z"></path><path d="M12 2v20"></path></svg>
-                </div>
-            </div>
-        </div>
-        <div class="card p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-3xl font-bold" id="energy-this-month">0 kWh</div>
-                    <div class="text-sm text-gray-500 mt-1" id="energy-this-month-label">This Month's Consumption</div>
-                </div>
-                 <div class="w-16 h-16 bg-indigo-100 rounded-full text-indigo-500 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                </div>
-            </div>
-        </div>
-         <div class="card p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-3xl font-bold text-green-500" id="energy-estimated-bill">$0.00</div>
-                    <div class="text-sm text-gray-500 mt-1">Estimated Monthly Bill</div>
-                </div>
-                 <div class="w-16 h-16 bg-green-100 rounded-full text-green-500 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card p-6 mb-8">
-        <h3 class="text-xl font-semibold mb-4 text-gray-700">View History</h3>
-        <div class="flex flex-col md:flex-row items-center gap-4">
-            <div class="w-full md:w-2/3">
-                <label for="energy-history-select" class="block text-sm font-medium mb-2 text-gray-600">Select a date to view summary</label>
-                <select id="energy-history-select" onchange="displayHistoricalEnergyData(this.value)" class="form-select"></select>
-            </div>
-            <div class="w-full md:w-1/3 pt-0 md:pt-7">
-                <button onclick="renderEnergyPage()" class="btn btn-secondary w-full">View Live Data</button>
-            </div>
-        </div>
-    </div>
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-        <div class="card p-6 lg:col-span-3">
-            <h3 class="text-xl font-semibold mb-4 text-gray-700">Live Power Usage (Watts)</h3>
-            <div id="realtime-chart-container" style="height: 300px;"></div>
-        </div>
-        <div class="card p-6 lg:col-span-2">
-            <h3 class="text-xl font-semibold mb-4 text-gray-700">Consumption by Room</h3>
-            <div id="consumption-by-room" class="space-y-3"></div>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-         <div class="card p-6 lg:col-span-3">
-            <h3 class="text-xl font-semibold mb-4 text-gray-700">Daily Consumption - Last 7 Days (kWh)</h3>
-            <div id="daily-chart-container" style="height: 300px;"></div>
-        </div>
-         <div class="card p-6 lg:col-span-2">
-             <h3 class="text-xl font-semibold mb-4 text-gray-700">Top Consuming Devices</h3>
-             <div id="consumption-by-device" class="space-y-3"></div>
-             <h3 class="text-xl font-semibold mt-6 mb-4 pt-6 border-t border-gray-200 text-gray-700">Settings</h3>
-             <div>
-                <label for="electricity-price" class="block text-sm font-medium mb-2 text-gray-600">Price per kWh ($)</label>
-                <div class="flex items-center space-x-2">
-                     <input type="number" id="electricity-price" step="0.01" class="form-input" placeholder="e.g., 0.15">
-                     <button onclick="updateElectricityPrice()" class="btn btn-primary">Save</button>
-                </div>
-             </div>
-        </div>
-    </div>
-</div>
-
-    <div id="device-control-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50 p-4">
-        <div class="control-modal-content p-6 relative">
-            <div class="flex justify-between items-center mb-4">
-                <button onclick="hideDeviceControlModal()" class="text-gray-500 hover:text-gray-800 text-2xl p-2 -ml-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                </button>
-                <div class="text-center">
-                    <h3 class="text-xl font-semibold text-gray-800" id="device-control-title">Device Name</h3>
-                    <p class="text-sm text-gray-500" id="device-control-room">Room Name</p>
-                </div>
-                <div class="w-10"></div> </div>
-            <div id="device-controls-container" class="mt-4"></div>
         </div>
     </div>
     
-    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50"><div class="modal-content p-8 max-w-md w-full mx-4"><h3 class="text-xl font-bold mb-4">Are you sure?</h3><p id="confirmation-message" class="text-gray-600 mb-6">This action cannot be undone.</p><div class="flex space-x-4 mt-6"><button id="confirm-action-btn" class="btn btn-danger flex-1">Confirm</button><button onclick="hideConfirmationModal()" class="btn btn-secondary flex-1">Cancel</button></div></div></div>
-    <div id="add-device-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50"><div class="modal-content p-8 max-w-md w-full mx-4"><h3 class="text-2xl font-bold mb-6 text-gray-800">Add New Device</h3><form onsubmit="event.preventDefault(); addDevice(event)"><div class="space-y-4"><div><label class="block text-sm font-medium mb-2 text-gray-600">Device Name</label><input type="text" id="device-name" class="form-input" placeholder="e.g., Bedroom Light" required></div><div><label class="block text-sm font-medium mb-2 text-gray-600">Device Type</label><select id="device-type" class="form-select" onchange="toggleDeviceSpecificFields()"><option value="lights">Smart Light</option><option value="climate">Climate Control</option><option value="security">Security Device</option><option value="appliances">Smart Speaker</option><option value="fan">Smart Fan</option><option value="cleaner">Smart Cleaner</option><option value="switch">Smart Switch</option><option value="router">Router</option></select></div><div><label class="block text-sm font-medium mb-2 text-gray-600">Room</label><select id="device-room" class="form-select"></select></div><div><label class="block text-sm font-medium mb-2 text-gray-600">Device IP Address</label><input type="text" id="device-ip" class="form-input" placeholder="e.g., 192.168.1.100" required pattern="\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"></div><div id="device-specific-add-fields" class="space-y-4"></div></div><div class="flex space-x-4 mt-6"><button type="submit" class="btn btn-primary flex-1">Add Device</button><button type="button" onclick="hideAddDeviceModal()" class="btn btn-secondary flex-1">Cancel</button></div></form></div></div>
-    <div id="add-room-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50"><div class="modal-content p-8 max-w-md w-full mx-4"><h3 class="text-2xl font-bold mb-6 text-gray-800">Add New Room</h3><form onsubmit="addRoom(event)"><div class="space-y-4"><div><label class="block text-sm font-medium mb-2 text-gray-600">Room Name</label><input type="text" id="room-name" class="form-input" placeholder="e.g., Home Office" required></div><div><label class="block text-sm font-medium mb-2 text-gray-600">Room Icon</label><div class="grid grid-cols-6 gap-2" id="room-icons">
-        <button type="button" onclick="selectRoomIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg hover:bg-gray-200 text-2xl border-2 border-transparent flex justify-center items-center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2h20v10H2zm0 14h20v-4H2zM7 8v4"></path><rect x="5" y="6" width="4" height="4" rx="1"></rect><rect x="15" y="6" width="4" height="4" rx="1"></rect></svg></button>
-        <button type="button" onclick="selectRoomIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg hover:bg-gray-200 text-2xl border-2 border-transparent flex justify-center items-center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7v10h20V7H2zm18 8H4v-6h16v6z"></path><path d="M4 7V5c0-1.1.9-2 2-2h12c1.1 0 2 .9 2 2v2"></path></svg></button>
-        <button type="button" onclick="selectRoomIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg hover:bg-gray-200 text-2xl border-2 border-transparent flex justify-center items-center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H9.5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"></path><path d="M12 18h.01"></path></svg></button>
-        <button type="button" onclick="selectRoomIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg hover:bg-gray-200 text-2xl border-2 border-transparent flex justify-center items-center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H6a2 2 0 00-2 2v2"></path><path d="M18 3h2a2 2 0 012 2v2"></path><path d="M12 4a8 8 0 00-8 8v1h16v-1a8 8 0 00-8-8z"></path><path d="M12 16v4"></path><path d="M10 20h4"></path></svg></button>
-        <button type="button" onclick="selectRoomIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg hover:bg-gray-200 text-2xl border-2 border-transparent flex justify-center items-center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></button>
-        <button type="button" onclick="selectRoomIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg text-2xl border-2 border-primary-color flex justify-center items-center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></button>
-    </div><input type="hidden" id="selected-room-icon" value='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>'></div></div><div class="flex space-x-4 mt-6"><button type="submit" class="btn btn-accent flex-1">Add Room</button><button type="button" onclick="hideAddRoomModal()" class="btn btn-secondary flex-1">Cancel</button></div></form></div></div>
-    
-    <div id="edit-room-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50"><div class="modal-content p-8 max-w-md w-full mx-4"><h3 class="text-2xl font-bold mb-6 text-gray-800">Edit Room</h3><form onsubmit="updateRoom(event)"><input type="hidden" id="edit-room-id"><div class="space-y-4"><div><label class="block text-sm font-medium mb-2 text-gray-600">Room Name</label><input type="text" id="edit-room-name" class="form-input" placeholder="e.g., Home Office" required></div><div><label class="block text-sm font-medium mb-2 text-gray-600">Room Icon</label><div class="grid grid-cols-6 gap-2" id="edit-room-icons">
-        <button type="button" onclick="selectEditRoomIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg hover:bg-gray-200 text-2xl border-2 border-transparent flex justify-center items-center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2h20v10H2zm0 14h20v-4H2zM7 8v4"></path><rect x="5" y="6" width="4" height="4" rx="1"></rect><rect x="15" y="6" width="4" height="4" rx="1"></rect></svg></button>
-        <button type="button" onclick="selectEditRoomIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg hover:bg-gray-200 text-2xl border-2 border-transparent flex justify-center items-center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7v10h20V7H2zm18 8H4v-6h16v6z"></path><path d="M4 7V5c0-1.1.9-2 2-2h12c1.1 0 2 .9 2 2v2"></path></svg></button>
-        <button type="button" onclick="selectEditRoomIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg hover:bg-gray-200 text-2xl border-2 border-transparent flex justify-center items-center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H9.5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"></path><path d="M12 18h.01"></path></svg></button>
-        <button type="button" onclick="selectEditRoomIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg hover:bg-gray-200 text-2xl border-2 border-transparent flex justify-center items-center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H6a2 2 0 00-2 2v2"></path><path d="M18 3h2a2 2 0 012 2v2"></path><path d="M12 4a8 8 0 00-8 8v1h16v-1a8 8 0 00-8-8z"></path><path d="M12 16v4"></path><path d="M10 20h4"></path></svg></button>
-        <button type="button" onclick="selectEditRoomIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg hover:bg-gray-200 text-2xl border-2 border-transparent flex justify-center items-center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></button>
-        <button type="button" onclick="selectEditRoomIcon(this)" class="room-icon-btn p-3 bg-gray-100 rounded-lg text-2xl border-2 border-transparent flex justify-center items-center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></button>
-    </div><input type="hidden" id="edit-selected-room-icon"></div></div><div class="flex space-x-4 mt-6"><button type="submit" class="btn btn-primary flex-1">Save Changes</button><button type="button" onclick="hideEditRoomModal()" class="btn btn-secondary flex-1">Cancel</button></div></form></div></div>
-
-    <div id="schedule-device-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50"><div class="modal-content p-8 max-w-md w-full mx-4"><h3 class="text-2xl font-bold mb-6 text-gray-800">Schedule Device</h3><form onsubmit="addSchedule(event)"><input type="hidden" id="schedule-device-id"><div class="space-y-4"><div><label class="block text-sm font-medium mb-2 text-gray-600">Action</label><select id="schedule-action" class="form-select"><option value="on">Turn On</option><option value="off">Turn Off</option></select></div><div id="schedule-value-container"></div><div><label class="block text-sm font-medium mb-2 text-gray-600">Time</label><input type="time" id="schedule-time" class="form-input" required></div><div><label class="block text-sm font-medium mb-2 text-gray-600">Days</label><div class="grid grid-cols-4 md:grid-cols-7 gap-2 text-center text-gray-600"><label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" name="schedule-day" value="Sun"><span>Sun</span></label><label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" name="schedule-day" value="Mon"><span>Mon</span></label><label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" name="schedule-day" value="Tue"><span>Tue</span></label><label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" name="schedule-day" value="Wed"><span>Wed</span></label><label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" name="schedule-day" value="Thu"><span>Thu</span></label><label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" name="schedule-day" value="Fri"><span>Fri</span></label><label class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" name="schedule-day" value="Sat"><span>Sat</span></label></div></div></div><div class="flex space-x-4 mt-6"><button type="submit" class="btn btn-primary flex-1 btn-add-schedule">Add Schedule</button><button type="button" onclick="hideScheduleDeviceModal()" class="btn btn-secondary flex-1">Cancel</button></div></form></div></div>
-    <div id="view-schedules-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50"><div class="modal-content p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold text-gray-800" id="view-schedules-title">Schedules</h3><button onclick="hideViewSchedulesModal()" class="text-gray-400 hover:text-gray-800 text-3xl">&times;</button></div><div id="device-specific-schedules" class="space-y-3"></div><div class="flex space-x-4 mt-6"><button onclick="hideViewSchedulesModal()" class="btn btn-secondary flex-1">Close</button></div></div></div>
-    <div id="create-group-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50"><div class="modal-content p-8 max-w-md w-full mx-4"><h3 class="text-2xl font-bold mb-6 text-gray-800">Create New Device Group</h3><form onsubmit="createDeviceGroup(event)"><div class="space-y-4"><div><label class="block text-sm font-medium mb-2 text-gray-600">Group Name</label><input type="text" id="group-name" class="form-input" placeholder="e.g., Living Room Lights" required></div><div><label class="block text-sm font-medium mb-2 text-gray-600">Select Devices</label><div id="group-device-list" class="max-h-48 overflow-y-auto bg-gray-50 border border-gray-200 rounded-lg p-2 space-y-1"></div></div></div><div class="flex space-x-4 mt-6"><button type="submit" class="btn bg-purple-500 hover:bg-purple-600 text-white flex-1">Create Group</button><button type="button" onclick="hideCreateGroupModal()" class="btn btn-secondary flex-1">Cancel</button></div></form></div></div>
-    <div id="room-details-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50"><div class="modal-content p-8 max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center mb-6">
-            <div class="flex items-center space-x-3">
-                <div id="room-details-title" class="text-2xl font-bold text-gray-800 flex items-center space-x-3"></div>
-                <span id="room-power-usage" class="text-sm font-semibold text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full"></span>
-            </div>
-            <div class="flex items-center space-x-2">
-                 <button id="edit-room-btn" class="btn btn-secondary !p-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
-                 <button id="delete-room-btn" class="btn btn-danger !p-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
-                 <button onclick="hideRoomDetailsModal()" class="text-gray-400 hover:text-gray-800 text-3xl ml-2">&times;</button>
-            </div>
-         </div>
-        <div id="room-devices-container" class="space-y-4"></div>
-        <div class="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-gray-200">
-            <button id="room-all-on-btn" class="btn btn-primary">All On</button>
-            <button id="room-all-off-btn" class="btn btn-secondary">All Off</button>
-            <button onclick="hideRoomDetailsModal()" class="btn btn-secondary col-start-3">Close</button>
-        </div>
-    </div></div>
-    
-    <div id="scene-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50 p-4">
-        <div class="modal-content p-8 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <h3 id="scene-modal-title" class="text-2xl font-bold mb-6 text-gray-800">Create New Scene</h3>
-            <form onsubmit="saveScene(event)">
-                <input type="hidden" id="scene-id">
+    <div id="add-device-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50">
+        <div class="modal-content p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800" data-i18n="modal_add_device_title">Add New Device</h3>
+            <form onsubmit="event.preventDefault(); addDevice(event)">
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-600">Scene Name</label>
-                        <input type="text" id="scene-name" class="form-input" placeholder="e.g., Movie Night" required>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_device_name_label">Device Name</label>
+                        <input type="text" id="device-name" class="form-input" data-i18n-placeholder="modal_device_name_placeholder" placeholder="e.g., Bedroom Light" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-600">Scene Icon</label>
-                        <div class="grid grid-cols-6 gap-2" id="scene-icons">
-                        </div>
-                        <input type="hidden" id="selected-scene-icon">
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_device_type_label">Device Type</label>
+                        <select id="device-type" class="form-select" onchange="toggleDeviceSpecificFields()"></select>
                     </div>
                     <div>
-                        <h4 class="text-lg font-semibold mb-2 text-gray-700">Actions</h4>
-                        <div id="scene-actions-list" class="space-y-2 mb-3">
-                        </div>
-                        <div class="card p-4 bg-gray-50 dark:bg-gray-100">
-                            <h5 class="font-semibold mb-2">Add New Action</h5>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-600">Device</label>
-                                    <select id="action-device-select" class="form-select" onchange="updateActionCommandSelect()"></select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-600">Command</label>
-                                    <select id="action-command-select" class="form-select" onchange="updateActionValueInput()"></select>
-                                </div>
-                            </div>
-                            <div id="action-value-container" class="mt-4"></div>
-                            <button type="button" onclick="addSceneAction()" class="btn btn-secondary w-full mt-4">Add Action to Scene</button>
-                        </div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_device_room_label">Room</label>
+                        <select id="device-room" class="form-select"></select>
                     </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_device_ip_label">Device IP Address</label>
+                        <input type="text" id="device-ip" class="form-input" data-i18n-placeholder="modal_device_ip_placeholder" placeholder="e.g., 192.168.1.100" required pattern="\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}">
+                    </div>
+                    <div id="device-specific-add-fields" class="space-y-4"></div>
                 </div>
                 <div class="flex space-x-4 mt-6">
-                    <button type="submit" class="btn btn-primary flex-1">Save Scene</button>
-                    <button type="button" onclick="hideSceneModal()" class="btn btn-secondary flex-1">Cancel</button>
+                    <button type="submit" class="btn btn-primary flex-1" data-i18n="btn_add_device">Add Device</button>
+                    <button type="button" onclick="hideAddDeviceModal()" class="btn btn-secondary flex-1" data-i18n="btn_cancel">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <div id="add-room-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50">
+        <div class="modal-content p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800" data-i18n="modal_add_room_title">Add New Room</h3>
+            <form onsubmit="addRoom(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_room_name_label">Room Name</label>
+                        <input type="text" id="room-name" class="form-input" data-i18n-placeholder="modal_room_name_placeholder" placeholder="e.g., Home Office" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_room_icon_label">Room Icon</label>
+                        <div class="grid grid-cols-6 gap-2" id="room-icons"></div>
+                        <input type="hidden" id="selected-room-icon">
+                    </div>
+                </div>
+                <div class="flex space-x-4 mt-6">
+                    <button type="submit" class="btn btn-accent flex-1" data-i18n="btn_add_room">Add Room</button>
+                    <button type="button" onclick="hideAddRoomModal()" class="btn btn-secondary flex-1" data-i18n="btn_cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="edit-room-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50">
+        <div class="modal-content p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800" data-i18n="modal_edit_room_title">Edit Room</h3>
+            <form onsubmit="updateRoom(event)">
+                <input type="hidden" id="edit-room-id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_room_name_label">Room Name</label>
+                        <input type="text" id="edit-room-name" class="form-input" data-i18n-placeholder="modal_room_name_placeholder" placeholder="e.g., Home Office" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_room_icon_label">Room Icon</label>
+                        <div class="grid grid-cols-6 gap-2" id="edit-room-icons"></div>
+                        <input type="hidden" id="edit-selected-room-icon">
+                    </div>
+                </div>
+                <div class="flex space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary flex-1" data-i18n="btn_save_changes">Save Changes</button>
+                    <button type="button" onclick="hideEditRoomModal()" class="btn btn-secondary flex-1" data-i18n="btn_cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="schedule-device-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50">
+        <div class="modal-content p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800" data-i18n="modal_schedule_title">Schedule Device</h3>
+            <form onsubmit="addSchedule(event)">
+                <input type="hidden" id="schedule-device-id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_schedule_action_label">Action</label>
+                        <select id="schedule-action" class="form-select"></select>
+                    </div>
+                    <div id="schedule-value-container"></div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_schedule_time_label">Time</label>
+                        <input type="time" id="schedule-time" class="form-input" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_schedule_days_label">Days</label>
+                        <div class="grid grid-cols-4 md:grid-cols-7 gap-2 text-center text-gray-600" id="schedule-days-container"></div>
+                    </div>
+                </div>
+                <div class="flex space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary flex-1 btn-add-schedule" data-i18n="btn_add_schedule">Add Schedule</button>
+                    <button type="button" onclick="hideScheduleDeviceModal()" class="btn btn-secondary flex-1" data-i18n="btn_cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="view-schedules-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50">
+        <div class="modal-content p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800" id="view-schedules-title" data-i18n="modal_view_schedules_title">Schedules</h3>
+                <button onclick="hideViewSchedulesModal()" class="text-gray-400 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div id="device-specific-schedules" class="space-y-3"></div>
+            <div class="flex space-x-4 mt-6">
+                <button onclick="hideViewSchedulesModal()" class="btn btn-secondary flex-1" data-i18n="btn_close">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="create-group-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50">
+        <div class="modal-content p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800" data-i18n="modal_create_group_title">Create New Device Group</h3>
+            <form onsubmit="createDeviceGroup(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_group_name_label">Group Name</label>
+                        <input type="text" id="group-name" class="form-input" data-i18n-placeholder="modal_group_name_placeholder" placeholder="e.g., Living Room Lights" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_group_select_label">Select Devices</label>
+                        <div id="group-device-list" class="max-h-48 overflow-y-auto bg-gray-50 border border-gray-200 rounded-lg p-2 space-y-1"></div>
+                    </div>
+                </div>
+                <div class="flex space-x-4 mt-6">
+                    <button type="submit" class="btn bg-purple-500 hover:bg-purple-600 text-white flex-1" data-i18n="btn_create_group">Create Group</button>
+                    <button type="button" onclick="hideCreateGroupModal()" class="btn btn-secondary flex-1" data-i18n="btn_cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="room-details-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50">
+        <div class="modal-content p-8 max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center space-x-3">
+                    <div id="room-details-title" class="text-2xl font-bold text-gray-800 flex items-center space-x-3"></div>
+                    <span id="room-power-usage" class="text-sm font-semibold text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full"></span>
+                </div>
+                <div class="flex items-center space-x-2">
+                     <button id="edit-room-btn" class="btn btn-secondary !p-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                     <button id="delete-room-btn" class="btn btn-danger !p-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                     <button onclick="hideRoomDetailsModal()" class="text-gray-400 hover:text-gray-800 text-3xl ml-2">&times;</button>
+                </div>
+             </div>
+            <div id="room-devices-container" class="space-y-4"></div>
+            <div class="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-gray-200">
+                <button id="room-all-on-btn" class="btn btn-primary" data-i18n="btn_all_on">All On</button>
+                <button id="room-all-off-btn" class="btn btn-secondary" data-i18n="btn_all_off">All Off</button>
+                <button onclick="hideRoomDetailsModal()" class="btn btn-secondary col-start-3" data-i18n="btn_close">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="scene-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50 p-4">
+        <div class="modal-content p-8 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 id="scene-modal-title" class="text-2xl font-bold mb-6 text-gray-800" data-i18n="modal_create_scene_title">Create New Scene</h3>
+            <form onsubmit="saveScene(event)">
+                <input type="hidden" id="scene-id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_scene_name_label">Scene Name</label>
+                        <input type="text" id="scene-name" class="form-input" data-i18n-placeholder="modal_scene_name_placeholder" placeholder="e.g., Movie Night" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-600" data-i18n="modal_scene_icon_label">Scene Icon</label>
+                        <div class="grid grid-cols-6 gap-2" id="scene-icons"></div>
+                        <input type="hidden" id="selected-scene-icon">
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold mb-2 text-gray-700" data-i18n="modal_scene_actions_label">Actions</h4>
+                        <div id="scene-actions-list" class="space-y-2 mb-3"></div>
+                        <div class="card p-4 bg-gray-50 dark:bg-gray-100">
+                            <h5 class="font-semibold mb-2" data-i18n="modal_scene_add_action_label">Add New Action</h5>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600" data-i18n="modal_scene_device_label">Device</label>
+                                    <select id="action-device-select" class="form-select" onchange="updateActionCommandSelect()"></select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-600" data-i18n="modal_scene_command_label">Command</label>
+                                    <select id="action-command-select" class="form-select" onchange="updateActionValueInput()"></select>
+                                </div>
+                            </div>
+                            <div id="action-value-container" class="mt-4"></div>
+                            <button type="button" onclick="addSceneAction()" class="btn btn-secondary w-full mt-4" data-i18n="modal_scene_add_action_btn">Add Action to Scene</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary flex-1" data-i18n="btn_save_scene">Save Scene</button>
+                    <button type="button" onclick="hideSceneModal()" class="btn btn-secondary flex-1" data-i18n="btn_cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="device-control-modal" class="fixed inset-0 bg-black bg-opacity-40 modal-backdrop hidden items-center justify-center z-50 p-4">
+    <div class="control-modal-content p-6 text-center">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h3 id="device-control-title" class="text-2xl font-bold text-left">Device Name</h3>
+                <p id="device-control-room" class="text-sm text-gray-500 text-left">Room Name</p>
+            </div>
+            <button onclick="hideDeviceControlModal()" class="text-gray-400 hover:text-gray-800 text-3xl">&times;</button>
+        </div>
+        <div id="device-controls-container">
+            </div>
+    </div>
+</div>
+
+<div id="toast-container" class="fixed bottom-4 right-4 z-[100] w-full max-w-xs space-y-3"></div>
+
     <div id="toast-container" class="fixed bottom-4 right-4 z-[100] w-full max-w-xs space-y-3"></div>
+
 
 <script type="module">
     // --- FIREBASE SDK IMPORTS ---
@@ -896,6 +747,17 @@
     let lastArchiveDate = null;
     let initialDataLoaded = false;
 
+    const deviceTypes = {
+        'switch': 'Smart Switch',
+        'lights': 'Smart Light',
+        'fan': 'Smart Fan',
+        'climate': 'Smart Climate',
+        'cleaner': 'Smart Cleaner',
+        'security': 'Security Device',
+        'appliances': 'Smart Appliance',
+        'router': 'Router'
+    };
+
     const themeIcons = {
         moon: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>`,
         sun: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 6a6 6 0 100 12 6 6 0 000-12z"></path></svg>`
@@ -912,17 +774,28 @@
 
     let networkTimeInterval, scheduleInterval;
 
-    // --- CORE INITIALIZATION & AUTHENTICATION ---
-    document.addEventListener('DOMContentLoaded', () => {
-        applyTheme();
-        loadDataFromLocalStorage();
-        archiveDailyEnergyData();
-        initializeClockAndSchedules();
-        initializeEnergyMonitoring();
-        // setupEventListeners(); // This function does not exist, removing it.
-        showNotification('Connecting to your dashboard...', 'info');
-        setInterval(fetchAllDeviceStatus, 3000); 
+ 
+document.addEventListener('DOMContentLoaded', () => {
+     // Language Toggle Logic
+    const langSelect = document.getElementById("languageToggle");
+    const currentLang = localStorage.getItem("language") || "en";
+    langSelect.value = currentLang;
+
+    langSelect.addEventListener("change", function () {
+        changeLanguage(this.value);
     });
+    
+
+    applyTheme();
+    loadDataFromLocalStorage();
+    archiveDailyEnergyData();
+    initializeClockAndSchedules();
+    initializeEnergyMonitoring();
+    // The _t function will be available from lang.js after the page reloads
+    showNotification('Connecting to your dashboard...', 'info'); 
+    setInterval(fetchAllDeviceStatus, 3000); 
+});
+
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -1397,7 +1270,24 @@ async function fetchAllDeviceStatus() {
     function renderHistoricalNotificationDropdown() { const select = document.getElementById('notification-history-select'); select.innerHTML = '<option value="">Select a previous session</option>'; if (historicalNotifications.length === 0) { select.innerHTML += '<option value="" disabled>No historical data</option>'; return; } historicalNotifications.forEach((session, index) => { const option = document.createElement('option'); option.value = index; option.textContent = `Session from ${session.timestamp}`; select.appendChild(option); }); }
     function openDeviceControl(deviceId) { currentDeviceId = deviceId; const device = devices.find(d => d.id === deviceId); if (!device) return; document.getElementById('device-control-title').textContent = device.name; document.getElementById('device-control-room').textContent = getRoomName(device.room); const container = document.getElementById('device-controls-container'); let dialHTML = '', modesHTML = '', mainProperty, min, max, value, unit, label; const icons = { cold: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"></line><line x1="17" y1="5" x2="7" y2="15"></line><line x1="17" y1="19" x2="7" y2="9"></line><line x1="5" y1="7" x2="15" y2="17"></line><line x1="19" y1="7" x2="9" y2="17"></line></svg>', fan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z"/><path d="M12 12v6.5"/><path d="M17.41 7.59c1.63.53 3.03 1.53 4.09 2.91"/><path d="M2.5 10.5c1.06-1.38 2.46-2.38 4.09-2.91"/><path d="M19.49 19.49c-1.38 1.06-2.89 2.06-4.59 2.51"/><path d="M4.93 19.49c-1.7-1.42-2.96-3.23-3.43-5.19"/><path d="M22.5 14.31c-.47 1.96-1.73 3.77-3.43 5.19"/></svg>', heat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>', white: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>', warm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>', cool: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>', disarmed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>', home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>', away: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>', timer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>' }; switch (device.type) { case 'climate': mainProperty = 'temperature'; value = device.temperature || 22; min = 16; max = 32; unit = '°C'; label = 'Room Temperature'; modesHTML = `<div class="text-center text-sm text-gray-400 mb-2 mt-6">Mode</div><div class="mode-selector">${createModeButton(device, 'mode', 'cold', icons.cold, 'Cold')}${createModeButton(device, 'mode', 'fan', icons.fan, 'Fan')}${createModeButton(device, 'mode', 'heat', icons.heat, 'Heat')}</div>`; break; case 'lights': mainProperty = 'brightness'; value = device.brightness || 100; min = 0; max = 100; unit = '%'; label = 'Brightness'; modesHTML = `<div class="text-center text-sm text-gray-400 mb-2 mt-6">Color</div><div class="mode-selector">${createModeButton(device, 'color', '#ffffff', icons.white, 'White')}${createModeButton(device, 'color', '#fff3b0', icons.warm, 'Warm')}${createModeButton(device, 'color', '#ade8f4', icons.cool, 'Cool')}</div>`; break; case 'fan': mainProperty = 'speed'; value = device.speed || 0; min = 0; max = 255; unit = ''; label = 'Fan Speed'; modesHTML = `<div class="text-center text-sm text-gray-400 mb-2 mt-6">Speed Level</div><div class="mode-selector">${createModeButton(device, 'speed', '85', '1', 'Low')}${createModeButton(device, 'speed', '170', '2', 'Med')}${createModeButton(device, 'speed', '255', '3', 'High')}</div>`; break; case 'appliances': mainProperty = 'volume'; value = device.volume || 60; min = 0; max = 100; unit = '%'; label = 'Volume'; break; case 'security': mainProperty = null; modesHTML = `<div class="text-center text-sm text-gray-400 mb-2 mt-6">Security Mode</div><div class="mode-selector">${createModeButton(device, 'securityMode', 'disarmed', icons.disarmed, 'Disarmed')}${createModeButton(device, 'securityMode', 'home', icons.home, 'Home')}${createModeButton(device, 'securityMode', 'away', icons.away, 'Away')}</div>`; break; case 'switch': mainProperty = null; modesHTML = `<div class="text-center text-sm text-gray-400 mb-2 mt-6">Quick Actions</div><div class="mode-selector">${createModeButton(device, 'timer', '15', icons.timer, '15m Timer')}</div>`; break; default: mainProperty = null; } if (mainProperty) { dialHTML = `<div class="dial-container" id="dial-container-${device.id}"><div class="dial-background"></div><div class="dial-progress" id="dial-progress-${device.id}"></div><div class="dial-center"><div class="dial-value" id="dial-value-${device.id}"></div><div class="dial-label">${label}</div></div></div>`; } else { dialHTML = `<div class="text-center my-8 py-4"><div class="text-lg text-gray-500">${device.type.charAt(0).toUpperCase() + device.type.slice(1)} is</div><div class="font-bold text-4xl ${device.status ? 'text-primary-color' : 'text-gray-400'}">${device.status ? 'On' : 'Off'}</div></div>`; } const powerButtonSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>`; const powerButtonHTML = `<div class="power-button-container"><button class="power-button ${!device.status ? 'off' : ''}" onclick="toggleDevice('${device.id}', true)">${powerButtonSVG}</button></div>`; const settingsHTML = ` <div class="mt-8 pt-4 border-t border-gray-200 grid grid-cols-3 gap-2"> <button onclick="hideDeviceControlModal(); showScheduleDeviceModal('${device.id}');" class="btn btn-schedule-special !text-xs !p-2">Schedule</button> <button onclick="hideDeviceControlModal(); viewDeviceSchedules('${device.id}');" class="btn btn-secondary !text-xs !p-2">View Schedules</button> <button onclick="hideDeviceControlModal(); confirmRemoveDevice('${device.id}');" class="btn btn-danger !text-xs !p-2">Remove</button> </div> `; container.innerHTML = dialHTML + modesHTML + powerButtonHTML + settingsHTML; if (mainProperty) { updateDial(device.id, mainProperty, value); setupDialInteraction(device.id, mainProperty, min, max); } document.getElementById('device-control-modal').classList.add('flex'); document.getElementById('device-control-modal').classList.remove('hidden'); }
     function hideDeviceControlModal() { document.getElementById('device-control-modal').classList.add('hidden'); document.getElementById('device-control-modal').classList.remove('flex'); currentDeviceId = null; }
-    function showAddDeviceModal() { if (rooms.length === 0) { showNotification('Please add a room first.', 'warning'); showAddRoomModal(); return; } populateRoomOptions(); toggleDeviceSpecificFields(); document.getElementById('add-device-modal').classList.remove('hidden'); document.getElementById('add-device-modal').classList.add('flex'); }
+function showAddDeviceModal() {
+    if (rooms.length === 0) {
+        showNotification(_t('js_add_room_first'), 'warning');
+        showAddRoomModal();
+        return;
+    }
+    
+    // This is the new logic that populates the device types
+    const deviceTypeSelect = document.getElementById('device-type');
+    deviceTypeSelect.innerHTML = Object.entries(deviceTypes).map(([key, value]) => 
+        `<option value="${key}">${value}</option>`
+    ).join('');
+
+    populateRoomOptions();
+    toggleDeviceSpecificFields();
+    document.getElementById('add-device-modal').classList.remove('hidden');
+    document.getElementById('add-device-modal').classList.add('flex');
+}
     function hideAddDeviceModal() { document.getElementById('add-device-modal').classList.add('hidden'); document.getElementById('add-device-modal').classList.remove('flex'); document.getElementById('add-device-modal').querySelector('form').reset(); }
     function showAddRoomModal() { document.getElementById('add-room-modal').classList.remove('hidden'); document.getElementById('add-room-modal').classList.add('flex'); }
     function hideAddRoomModal() { document.getElementById('add-room-modal').classList.add('hidden'); document.getElementById('add-room-modal').classList.remove('flex'); document.getElementById('add-room-modal').querySelector('form').reset(); }
@@ -1459,5 +1349,6 @@ async function fetchAllDeviceStatus() {
     function selectRoomIcon(btn) { document.getElementById('selected-room-icon').value = btn.innerHTML; document.querySelectorAll('#add-room-modal .room-icon-btn').forEach(b => b.classList.remove('border-primary-color')); btn.classList.add('border-primary-color'); }
     function selectEditRoomIcon(btn) { document.getElementById('edit-selected-room-icon').value = btn.innerHTML; document.querySelectorAll('#edit-room-modal .room-icon-btn').forEach(b => b.classList.remove('border-primary-color')); btn.classList.add('border-primary-color'); }
 </script>
+<script src="lang.js"></script> 
 </body>
 </html>
